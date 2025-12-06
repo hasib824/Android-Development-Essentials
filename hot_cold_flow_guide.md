@@ -7,7 +7,7 @@
 4. [মূল পার্থক্য](#মূল-পার্থক্য)
 5. [Cold Flow Example বিশ্লেষণ](#cold-flow-example-বিশ্লেষণ)
 6. [Hot Flow Example বিশ্লেষণ](#hot-flow-example-বিশ্লেষণ)
-7. [Output তুলনা](#output-তুলনা)
+7. [Output থেকে শিক্ষা](#output-থেকে-শিক্ষা)
 8. [কখন কোনটি ব্যবহার করবেন](#কখন-কোনটি-ব্যবহার-করবেন)
 9. [Visual Comparison](#visual-comparison)
 
@@ -98,21 +98,15 @@ fun createAndStartHotCounterFlow(): SharedFlow<Int> {
 ```kotlin
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
-import java.time.LocalTime
-import java.time.format.DateTimeFormatter
 
 fun createColdCounterFlow(): Flow<Int> = flow {
     println("--- Cold Flow Emitter প্রতিবার চালু হলো ---")
     var count = 0
     while (count < 15) {
         count++
-        val counterValue = count
-        
-        emit(counterValue)
-        
-        println("-> [COLD EMITTER] পুশ করলো: $counterValue (সময়: ${LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss.SSS"))})")
-        
-        delay(500) // 500 মিলিসেকেন্ড অপেক্ষা
+        emit(count)
+        println("-> [COLD EMITTER] পুশ করলো: $count")
+        delay(500)
     }
     println("--- Cold Flow Emitter বন্ধ হলো ---")
 }
@@ -128,51 +122,85 @@ fun startColdObserver(name: String, delayMillis: Long, coldFlow: Flow<Int>) {
     }
 }
 
-fun mainColdFlowExample() = runBlocking {
+fun main() = runBlocking {
     val coldFlow = createColdCounterFlow()
     
     startColdObserver("Observer 1 (Cold)", 1000L, coldFlow)
     startColdObserver("Observer 2 (Cold)", 3000L, coldFlow)
     
     delay(10000L)
+    println("\nCold Flow প্রোগ্রাম সমাপ্ত।")
 }
 ```
 
 ### 📤 Cold Flow Output:
 
 ```
-========================================
-       COLD FLOW EXAMPLE শুরু
-========================================
-
 *** Observer 1 (Cold) চালু হলো (বিলম্ব: 1.0s) ***
 --- Cold Flow Emitter প্রতিবার চালু হলো ---
--> [COLD EMITTER] পুশ করলো: 1 (সময়: 14:30:01.123)
+-> [COLD EMITTER] পুশ করলো: 1
 [ Observer 1 (Cold) ] পেল: 1
--> [COLD EMITTER] পুশ করলো: 2 (সময়: 14:30:01.623)
+-> [COLD EMITTER] পুশ করলো: 2
 [ Observer 1 (Cold) ] পেল: 2
--> [COLD EMITTER] পুশ করলো: 3 (সময়: 14:30:02.123)
+-> [COLD EMITTER] পুশ করলো: 3
 [ Observer 1 (Cold) ] পেল: 3
+-> [COLD EMITTER] পুশ করলো: 4
+[ Observer 1 (Cold) ] পেল: 4
 
 *** Observer 2 (Cold) চালু হলো (বিলম্ব: 3.0s) ***
 --- Cold Flow Emitter প্রতিবার চালু হলো ---  ← নতুন Emitter চালু!
--> [COLD EMITTER] পুশ করলো: 1 (সময়: 14:30:03.123)
+-> [COLD EMITTER] পুশ করলো: 1
 [ Observer 2 (Cold) ] পেল: 1  ← শুরু থেকে পাচ্ছে!
--> [COLD EMITTER] পুশ করলো: 2 (সময়: 14:30:03.623)
-[ Observer 2 (Cold) ] পেল: 2
--> [COLD EMITTER] পুশ করলো: 4 (সময়: 14:30:02.623)
-[ Observer 1 (Cold) ] পেল: 4
--> [COLD EMITTER] পুশ করলো: 3 (সময়: 14:30:04.123)
-[ Observer 2 (Cold) ] পেল: 3
--> [COLD EMITTER] পুশ করলো: 5 (সময়: 14:30:03.123)
+-> [COLD EMITTER] পুশ করলো: 5
 [ Observer 1 (Cold) ] পেল: 5
--> [COLD EMITTER] পুশ করলো: 4 (সময়: 14:30:04.623)
+-> [COLD EMITTER] পুশ করলো: 2
+[ Observer 2 (Cold) ] পেল: 2
+-> [COLD EMITTER] পুশ করলো: 6
+[ Observer 1 (Cold) ] পেল: 6
+-> [COLD EMITTER] পুশ করলো: 3
+[ Observer 2 (Cold) ] পেল: 3
+-> [COLD EMITTER] পুশ করলো: 7
+[ Observer 1 (Cold) ] পেল: 7
+-> [COLD EMITTER] পুশ করলো: 4
 [ Observer 2 (Cold) ] পেল: 4
-... (দুটো আলাদা stream চলতে থাকে)
--> [COLD EMITTER] পুশ করলো: 15 (সময়: 14:30:08.123)
+-> [COLD EMITTER] পুশ করলো: 8
+[ Observer 1 (Cold) ] পেল: 8
+-> [COLD EMITTER] পুশ করলো: 5
+[ Observer 2 (Cold) ] পেল: 5
+-> [COLD EMITTER] পুশ করলো: 9
+[ Observer 1 (Cold) ] পেল: 9
+-> [COLD EMITTER] পুশ করলো: 6
+[ Observer 2 (Cold) ] পেল: 6
+-> [COLD EMITTER] পুশ করলো: 10
+[ Observer 1 (Cold) ] পেল: 10
+-> [COLD EMITTER] পুশ করলো: 7
+[ Observer 2 (Cold) ] পেল: 7
+-> [COLD EMITTER] পুশ করলো: 11
+[ Observer 1 (Cold) ] পেল: 11
+-> [COLD EMITTER] পুশ করলো: 8
+[ Observer 2 (Cold) ] পেল: 8
+-> [COLD EMITTER] পুশ করলো: 12
+[ Observer 1 (Cold) ] পেল: 12
+-> [COLD EMITTER] পুশ করলো: 9
+[ Observer 2 (Cold) ] পেল: 9
+-> [COLD EMITTER] পুশ করলো: 13
+[ Observer 1 (Cold) ] পেল: 13
+-> [COLD EMITTER] পুশ করলো: 10
+[ Observer 2 (Cold) ] পেল: 10
+-> [COLD EMITTER] পুশ করলো: 14
+[ Observer 1 (Cold) ] পেল: 14
+-> [COLD EMITTER] পুশ করলো: 11
+[ Observer 2 (Cold) ] পেল: 11
+-> [COLD EMITTER] পুশ করলো: 15
 [ Observer 1 (Cold) ] পেল: 15
 --- Cold Flow Emitter বন্ধ হলো ---
--> [COLD EMITTER] পুশ করলো: 15 (সময়: 14:30:10.123)
+-> [COLD EMITTER] পুশ করলো: 12
+[ Observer 2 (Cold) ] পেল: 12
+-> [COLD EMITTER] পুশ করলো: 13
+[ Observer 2 (Cold) ] পেল: 13
+-> [COLD EMITTER] পুশ করলো: 14
+[ Observer 2 (Cold) ] পেল: 14
+-> [COLD EMITTER] পুশ করলো: 15
 [ Observer 2 (Cold) ] পেল: 15
 --- Cold Flow Emitter বন্ধ হলো ---
 
@@ -205,8 +233,6 @@ Cold Flow প্রোগ্রাম সমাপ্ত।
 ```kotlin
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
-import java.time.LocalTime
-import java.time.format.DateTimeFormatter
 
 private val applicationScope = CoroutineScope(Dispatchers.Default)
 
@@ -218,14 +244,9 @@ fun createAndStartHotCounterFlow(): SharedFlow<Int> {
         var count = 0
         while (isActive) {
             count++
-            val counterValue = count
-            
-            mutableFlow.emit(counterValue)
-            
-            println("-> [EMITTER] পুশ করলো: $counterValue (সময়: ${LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss.SSS"))})")
-            
+            mutableFlow.emit(count)
+            println("-> [HOT EMITTER] পুশ করলো: $count")
             delay(500)
-            
             if (count >= 15) break
         }
         println("--- Emitter বন্ধ হলো ---")
@@ -245,7 +266,7 @@ fun startObserver(name: String, delayMillis: Long, flow: SharedFlow<Int>) {
     }
 }
 
-fun mainHotFlowExample() = runBlocking {
+fun main() = runBlocking {
     val hotFlow = createAndStartHotCounterFlow()
     
     startObserver("Observer 1", 1000L, hotFlow)
@@ -253,50 +274,59 @@ fun mainHotFlowExample() = runBlocking {
     
     delay(8500L)
     applicationScope.cancel()
+    
+    println("\nHot Flow প্রোগ্রাম সমাপ্ত।")
 }
 ```
 
 ### 📤 Hot Flow Output:
 
 ```
-========================================
-        HOT FLOW EXAMPLE শুরু
-========================================
-
 --- Emitter (Hot Flow) চালু হলো ---  ← সাথে সাথে চালু!
--> [EMITTER] পুশ করলো: 1 (সময়: 14:35:10.123)
--> [EMITTER] পুশ করলো: 2 (সময়: 14:35:10.623)  ← Observer ছাড়াই emit হচ্ছে!
+-> [HOT EMITTER] পুশ করলো: 1
+-> [HOT EMITTER] পুশ করলো: 2  ← Observer ছাড়াই emit হচ্ছে!
 
 *** Observer 1 চালু হলো (বিলম্ব: 1.0s) ***
--> [EMITTER] পুশ করলো: 3 (সময়: 14:35:11.123)
+-> [HOT EMITTER] পুশ করলো: 3
 [ Observer 1 ] পেল: 3  ← 1, 2 মিস করেছে!
--> [EMITTER] পুশ করলো: 4 (সময়: 14:35:11.623)
+-> [HOT EMITTER] পুশ করলো: 4
 [ Observer 1 ] পেল: 4
--> [EMITTER] পুশ করলো: 5 (সময়: 14:35:12.123)
+-> [HOT EMITTER] পুশ করলো: 5
 [ Observer 1 ] পেল: 5
--> [EMITTER] পুশ করলো: 6 (সময়: 14:35:12.623)
+-> [HOT EMITTER] পুশ করলো: 6
 [ Observer 1 ] পেল: 6
 
 *** Observer 2 চালু হলো (বিলম্ব: 3.0s) ***
--> [EMITTER] পুশ করলো: 7 (সময়: 14:35:13.123)
+-> [HOT EMITTER] পুশ করলো: 7
 [ Observer 1 ] পেল: 7  ← একই emitter শেয়ার করছে
 [ Observer 2 ] পেল: 7  ← 1-6 মিস করেছে!
--> [EMITTER] পুশ করলো: 8 (সময়: 14:35:13.623)
+-> [HOT EMITTER] পুশ করলো: 8
 [ Observer 1 ] পেল: 8
 [ Observer 2 ] পেল: 8
--> [EMITTER] পুশ করলো: 9 (সময়: 14:35:14.123)
+-> [HOT EMITTER] পুশ করলো: 9
 [ Observer 1 ] পেল: 9
 [ Observer 2 ] পেল: 9
--> [EMITTER] পুশ করলো: 10 (সময়: 14:35:14.623)
+-> [HOT EMITTER] পুশ করলো: 10
 [ Observer 1 ] পেল: 10
 [ Observer 2 ] পেল: 10
-... (একসাথে একই data পাচ্ছে)
--> [EMITTER] পুশ করলো: 15 (সময়: 14:35:17.123)
+-> [HOT EMITTER] পুশ করলো: 11
+[ Observer 1 ] পেল: 11
+[ Observer 2 ] পেল: 11
+-> [HOT EMITTER] পুশ করলো: 12
+[ Observer 1 ] পেল: 12
+[ Observer 2 ] পেল: 12
+-> [HOT EMITTER] পুশ করলো: 13
+[ Observer 1 ] পেল: 13
+[ Observer 2 ] পেল: 13
+-> [HOT EMITTER] পুশ করলো: 14
+[ Observer 1 ] পেল: 14
+[ Observer 2 ] পেল: 14
+-> [HOT EMITTER] পুশ করলো: 15
 [ Observer 1 ] পেল: 15
 [ Observer 2 ] পেল: 15
 --- Emitter বন্ধ হলো ---
 
-প্রোগ্রাম সমাপ্ত।
+Hot Flow প্রোগ্রাম সমাপ্ত।
 ```
 
 ### 🔍 কিভাবে কাজ করে:
@@ -306,10 +336,10 @@ fun mainHotFlowExample() = runBlocking {
    - Observer না থাকলেও emit হতে থাকে
 2. **Observer 1 Start (1s পরে)**: 
    - Observer 1 collect করা শুরু করে
-   - যেহেতু 1s চলে গেছে, সে 3-4 নম্বর থেকে পায় (1-2 মিস)
+   - যেহেতু 1s চলে গেছে, সে 3 নম্বর থেকে পায় (1-2 মিস)
 3. **Observer 2 Start (3s পরে)**:
    - Observer 2 collect করা শুরু করে
-   - সে 7-8 নম্বর থেকে পায় (1-6 মিস)
+   - সে 7 নম্বর থেকে পায় (1-6 মিস)
    - Observer 1 এর সাথে **একই emitter শেয়ার করে**
 
 ### 💡 গুরুত্বপূর্ণ পয়েন্ট:
@@ -329,6 +359,7 @@ fun mainHotFlowExample() = runBlocking {
 | **Data Start** | সবসময় 1 থেকে | যেখান থেকে join করে |
 | **Emitter সংখ্যা** | Observer সংখ্যা = Emitter সংখ্যা | সবসময় 1টি |
 | **Data Miss** | কখনো মিস হয় না | দেরিতে join করলে মিস হয় |
+| **Timeline** | প্রতিটি observer এর আলাদা | সবার একই timeline |
 
 ---
 
