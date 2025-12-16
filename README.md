@@ -9,3 +9,7 @@ Hot Flow এবং Cold Flow এর মধ্যে পার্থক্য, co
 
 ### [KSP](https://github.com/hasib824/Android-Development-Essentials/blob/main/ksp.md)
 kSP, code examples, এবং বিস্তারিত ব্যাখ্যা সহ সম্পূর্ণ গাইড।
+
+## 🌐 HTTP Client
+### [OkHttp Tutorial](https://github.com/hasib824/Android-Development-Essentials/blob/main/kHttp.md)
+OkHttp দিয়ে network requests, interceptors, caching, file operations সহ সম্পূর্ণ HTTP client implementation গাইড।
