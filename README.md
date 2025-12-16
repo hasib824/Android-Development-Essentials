@@ -1,6 +1,11 @@
 # Android-Development-Essentials
 
-## 📚 Kotlin Flow Concepts
+## 🔓 Kotlin Core Concepts
+### [open Keyword Tutorial - বাংলায়](https://github.com/hasib824/Android-Development-Essentials/blob/main/KOTLIN_OPEN_KEYWORD.md)
+Kotlin এ inheritance এবং override এর জন্য `open` keyword এর সম্পূর্ণ গাইড। Class, function, property কে extendable করা, `open` vs `abstract` পার্থক্য, এবং Android development এ real-world use cases (BaseViewModel, BaseRepository, Custom Views, Adapter Pattern)।
+
+### [object & companion object Tutorial](https://github.com/hasib824/Android-Development-Essentials/blob/main/KOTLIN_OBJECT_SINGLETON.md)
+`object` vs `companion object` vs manual singleton - কখন কোনটা use করবেন। Real-world examples: AppConfig, Logger, Factory methods, PreferencesManager, NetworkManager।
 
 ### [Hot Flow and Cold Flow](https://github.com/hasib824/Android-Development-Essentials/blob/main/hot_cold_flow_guide.md)
 Hot Flow এবং Cold Flow এর মধ্যে পার্থক্য, code examples, এবং বিস্তারিত ব্যাখ্যা সহ সম্পূর্ণ গাইড।
@@ -9,7 +14,6 @@ Hot Flow এবং Cold Flow এর মধ্যে পার্থক্য, co
 ### [various valid and invalid ways to pass suspend functions to Kotlin Flow operators like](https://github.com/hasib824/Android-Development/blob/main/README.md)
 
 ## 📚 Kotlin KSP Concepts
-
 ### [KSP](https://github.com/hasib824/Android-Development-Essentials/blob/main/ksp.md)
 kSP, code examples, এবং বিস্তারিত ব্যাখ্যা সহ সম্পূর্ণ গাইড।
 
@@ -21,7 +25,4 @@ OkHttp দিয়ে network requests, interceptors, caching, file operations 
 ### [RESTful API Tutorial - বাংলায়](https://github.com/hasib824/Android-Development-Essentials/blob/main/RESTFUL_API_BANGLA.md)
 REST API fundamentals - HTTP methods, status codes, URL structure, request/response patterns এবং best practices। Real examples এবং visual diagrams সহ easy-to-understand বাংলা tutorial।
 
-## 🔓 Kotlin Core Concepts
-### [open Keyword Tutorial - বাংলায়](https://github.com/hasib824/Android-Development-Essentials/blob/main/KOTLIN_OPEN_KEYWORD.md)
-Kotlin এ inheritance এবং override এর জন্য `open` keyword এর সম্পূর্ণ গাইড। Class, function, property কে extendable করা, `open` vs `abstract` পার্থক্য, এবং Android development এ real-world use cases (BaseViewModel, BaseRepository, Custom Views, Adapter Pattern)।
 
