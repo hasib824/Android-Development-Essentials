@@ -16,3 +16,8 @@ kSP, code examples, এবং বিস্তারিত ব্যাখ্য�
 ## 🌐 HTTP Client
 ### [OkHttp Tutorial](https://github.com/hasib824/Android-Development-Essentials/blob/main/kHttp.md)
 OkHttp দিয়ে network requests, interceptors, caching, file operations সহ সম্পূর্ণ HTTP client implementation গাইড।
+
+## 📡 REST API
+### [RESTful API Tutorial - বাংলায়](https://github.com/hasib824/Android-Development-Essentials/blob/main/RESTFUL_API_BANGLA.md)
+REST API fundamentals - HTTP methods, status codes, URL structure, request/response patterns এবং best practices। Real examples এবং visual diagrams সহ easy-to-understand বাংলা tutorial।
+
