@@ -5,6 +5,9 @@
 ### [Hot Flow and Cold Flow](https://github.com/hasib824/Android-Development-Essentials/blob/main/hot_cold_flow_guide.md)
 Hot Flow এবং Cold Flow এর মধ্যে পার্থক্য, code examples, এবং বিস্তারিত ব্যাখ্যা সহ সম্পূর্ণ গাইড।
 
+## 📚 Kotlin Flow map with Suspend Functions – Examples & Pitfalls
+### [various valid and invalid ways to pass suspend functions to Kotlin Flow operators like](https://github.com/hasib824/Android-Development/blob/main/README.md)
+
 ## 📚 Kotlin KSP Concepts
 
 ### [KSP](https://github.com/hasib824/Android-Development-Essentials/blob/main/ksp.md)
