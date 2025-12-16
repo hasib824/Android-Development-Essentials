@@ -21,3 +21,7 @@ OkHttp দিয়ে network requests, interceptors, caching, file operations 
 ### [RESTful API Tutorial - বাংলায়](https://github.com/hasib824/Android-Development-Essentials/blob/main/RESTFUL_API_BANGLA.md)
 REST API fundamentals - HTTP methods, status codes, URL structure, request/response patterns এবং best practices। Real examples এবং visual diagrams সহ easy-to-understand বাংলা tutorial।
 
+## 🔓 Kotlin Core Concepts
+### [open Keyword Tutorial - বাংলায়](https://github.com/hasib824/Android-Development-Essentials/blob/main/KOTLIN_OPEN_KEYWORD.md)
+Kotlin এ inheritance এবং override এর জন্য `open` keyword এর সম্পূর্ণ গাইড। Class, function, property কে extendable করা, `open` vs `abstract` পার্থক্য, এবং Android development এ real-world use cases (BaseViewModel, BaseRepository, Custom Views, Adapter Pattern)।
+
