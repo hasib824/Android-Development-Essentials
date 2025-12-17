@@ -10,6 +10,9 @@ Kotlin এ inheritance এবং override এর জন্য `open` keyword এ
 ### [Kotlin const Keyword - সংক্ষিপ্ত Tutorial](https://github.com/hasib824/Android-Development-Essentials/blob/main/KOTLIN_CONST_KEYWORD.md)
 `const` vs `val`- কখন কোনটা use করবেন। Real-world examples
 
+### [Kotlin lateinit & Lazy - সংক্ষিপ্ত Tutorial](https://github.com/hasib824/Android-Development-Essentials/blob/main/KOTLIN_LATEINIT_VS_LAZY.md)
+`lateinit` vs `Lazy`- কখন কোনটা use করবেন। 
+
 
 ### [Hot Flow and Cold Flow](https://github.com/hasib824/Android-Development-Essentials/blob/main/hot_cold_flow_guide.md)
 Hot Flow এবং Cold Flow এর মধ্যে পার্থক্য, code examples, এবং বিস্তারিত ব্যাখ্যা সহ সম্পূর্ণ গাইড।
