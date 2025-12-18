@@ -33,3 +33,9 @@ OkHttp দিয়ে network requests, interceptors, caching, file operations 
 REST API fundamentals - HTTP methods, status codes, URL structure, request/response patterns এবং best practices। Real examples এবং visual diagrams সহ easy-to-understand বাংলা tutorial।
 
 
+## 📚 Kotlin Coroutine
+### [Coroutinescope vs Supervisorscope](https://outcomeschool.com/blog/coroutinescope-vs-supervisorscope)
+বিস্তারিত ব্যাখ্যা সহ সম্পূর্ণ গাইড।
+
+
+
