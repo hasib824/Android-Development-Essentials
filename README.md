@@ -13,6 +13,18 @@ Kotlin এ inheritance এবং override এর জন্য `open` keyword এ
 ### [Kotlin lateinit & Lazy - সংক্ষিপ্ত Tutorial](https://github.com/hasib824/Android-Development-Essentials/blob/main/KOTLIN_LATEINIT_VS_LAZY.md)
 `lateinit` vs `Lazy`- কখন কোনটা use করবেন। 
 
+### [Sealed Class কী এবং কেন](https://github.com/hasib824/Android-Development-Essentials/blob/main/Kotlin_sealed_class_tutorial_bangla.md)
+Sealed Class কী এবং কেন ব্যবহার করবেন - খুব সহজ ভাষায় ব্যাখ্যা
+✅ সব সুবিধা বিস্তারিত - When expression, Type Safety, State Management
+✅ Sealed Class vs Sealed Interface - কখন কোনটা ব্যবহার করবেন তুলনামূলক সারণী সহ
+✅ ৫টি বাস্তব উদাহরণ:
+API Response Handling
+Navigation Events
+Form Validation (বাংলাদেশি ফোন নম্বর validation সহ!)
+File Operations
+Authentication System (পূর্ণাঙ্গ Android app)
+
+
 
 ### [Hot Flow and Cold Flow](https://github.com/hasib824/Android-Development-Essentials/blob/main/hot_cold_flow_guide.md)
 Hot Flow এবং Cold Flow এর মধ্যে পার্থক্য, code examples, এবং বিস্তারিত ব্যাখ্যা সহ সম্পূর্ণ গাইড।
