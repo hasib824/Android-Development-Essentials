@@ -24,6 +24,23 @@ Form Validation (বাংলাদেশি ফোন নম্বর validatio
 File Operations
 Authentication System (পূর্ণাঙ্গ Android app)
 
+### [Kotlin Scope Functions এর একটা complete tutorial](https://github.com/hasib824/Android-Development-Essentials/blob/main/kotlin_scope_functions.md)
+যা যা আছে:
+✅ ৫টি Scope Function - let, run, with, apply, also
+✅ প্রতিটির সহজ ব্যাখ্যা - কী করে, কখন ব্যবহার করবেন
+✅ Simple Real-world Examples - Registration, Image Loading, SharedPreferences, RecyclerView, Network calls
+✅ Scenario-based Learning - বাস্তব Android development scenarios
+✅ ৩টি Comparison Table:
+
+সংক্ষিপ্ত তুলনা
+বিস্তারিত feature তুলনা
+Context object ও Return value তুলনা
+
+✅ Decision Chart - কোন situation এ কোনটা use করবেন
+✅ Do's and Don'ts - কী করবেন কী করবেন না
+✅ মনে রাখার সূত্র - সহজে মনে রাখার জন্য
+
+
 
 
 ### [Hot Flow and Cold Flow](https://github.com/hasib824/Android-Development-Essentials/blob/main/hot_cold_flow_guide.md)
