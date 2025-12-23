@@ -15,30 +15,30 @@ Kotlin এ inheritance এবং override এর জন্য `open` keyword এ
 
 ### [Sealed Class কী এবং কেন](https://github.com/hasib824/Android-Development-Essentials/blob/main/Kotlin_sealed_class_tutorial_bangla.md)
 Sealed Class কী এবং কেন ব্যবহার করবেন - খুব সহজ ভাষায় ব্যাখ্যা
-✅ সব সুবিধা বিস্তারিত - When expression, Type Safety, State Management
-✅ Sealed Class vs Sealed Interface - কখন কোনটা ব্যবহার করবেন তুলনামূলক সারণী সহ
-✅ ৫টি বাস্তব উদাহরণ:
-API Response Handling
-Navigation Events
-Form Validation (বাংলাদেশি ফোন নম্বর validation সহ!)
-File Operations
-Authentication System (পূর্ণাঙ্গ Android app)
+* ✅ সব সুবিধা বিস্তারিত - When expression, Type Safety, State Management
+* ✅ Sealed Class vs Sealed Interface - কখন কোনটা ব্যবহার করবেন তুলনামূলক সারণী সহ
+* ✅ ৫টি বাস্তব উদাহরণ:
+    * API Response Handling
+    * Navigation Events
+    * Form Validation (বাংলাদেশি ফোন নম্বর validation সহ!)
+    * File Operations
+    * Authentication System (পূর্ণাঙ্গ Android app)
 
 ### [Kotlin Scope Functions এর একটা complete tutorial](https://github.com/hasib824/Android-Development-Essentials/blob/main/kotlin_scope_functions.md)
 যা যা আছে:
-✅ ৫টি Scope Function - let, run, with, apply, also
-✅ প্রতিটির সহজ ব্যাখ্যা - কী করে, কখন ব্যবহার করবেন
-✅ Simple Real-world Examples - Registration, Image Loading, SharedPreferences, RecyclerView, Network calls
-✅ Scenario-based Learning - বাস্তব Android development scenarios
-✅ ৩টি Comparison Table:
+* ✅ ৫টি Scope Function - let, run, with, apply, also
+* ✅ প্রতিটির সহজ ব্যাখ্যা - কী করে, কখন ব্যবহার করবেন
+* ✅ Simple Real-world Examples - Registration, Image Loading, SharedPreferences, RecyclerView, Network calls
+* ✅ Scenario-based Learning - বাস্তব Android development scenarios
+* ✅ ৩টি Comparison Table:
 
-সংক্ষিপ্ত তুলনা
-বিস্তারিত feature তুলনা
-Context object ও Return value তুলনা
+* সংক্ষিপ্ত তুলনা
+* বিস্তারিত feature তুলনা
+* Context object ও Return value তুলনা
 
-✅ Decision Chart - কোন situation এ কোনটা use করবেন
-✅ Do's and Don'ts - কী করবেন কী করবেন না
-✅ মনে রাখার সূত্র - সহজে মনে রাখার জন্য
+* ✅ Decision Chart - কোন situation এ কোনটা use করবেন
+* ✅ Do's and Don'ts - কী করবেন কী করবেন না
+* ✅ মনে রাখার সূত্র - সহজে মনে রাখার জন্য
 
 
 
@@ -65,6 +65,12 @@ REST API fundamentals - HTTP methods, status codes, URL structure, request/respo
 ## 📚 Kotlin Coroutine
 ### [Coroutinescope vs Supervisorscope](https://outcomeschool.com/blog/coroutinescope-vs-supervisorscope)
 বিস্তারিত ব্যাখ্যা সহ সম্পূর্ণ গাইড।
+
+## 📚 Kotlin Compose
+### [Compose Sideffect]
+বিস্তারিত ব্যাখ্যা সহ সম্পূর্ণ গাইড।
+#### [Snapshotflow](https://github.com/hasib824/Android-Development-Essentials/blob/main/Sideffcet_snapshotflow.md)
+
 
 
 
