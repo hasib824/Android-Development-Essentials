@@ -1,10 +1,10 @@
 # Android-Development-Essentials
 
 ## 🔓 Kotlin Core Concepts
-### [open Keyword Tutorial - বাংলায়](https://github.com/hasib824/Android-Development-Essentials/blob/main/KOTLIN_OPEN_KEYWORD.md)
+### [Open Keyword Tutorial - বাংলায়](https://github.com/hasib824/Android-Development-Essentials/blob/main/KOTLIN_OPEN_KEYWORD.md)
 Kotlin এ inheritance এবং override এর জন্য `open` keyword এর সম্পূর্ণ গাইড। Class, function, property কে extendable করা, `open` vs `abstract` পার্থক্য, এবং Android development এ real-world use cases (BaseViewModel, BaseRepository, Custom Views, Adapter Pattern)।
 
-### [object & companion object Tutorial](https://github.com/hasib824/Android-Development-Essentials/blob/main/KOTLIN_OBJECT_SINGLETON.md)
+### [Object & companion object Tutorial](https://github.com/hasib824/Android-Development-Essentials/blob/main/KOTLIN_OBJECT_SINGLETON.md)
 `object` vs `companion object` vs manual singleton - কখন কোনটা use করবেন। Real-world examples: AppConfig, Logger, Factory methods, PreferencesManager, NetworkManager।
 
 ### [Kotlin const Keyword - সংক্ষিপ্ত Tutorial](https://github.com/hasib824/Android-Development-Essentials/blob/main/KOTLIN_CONST_KEYWORD.md)
@@ -67,9 +67,12 @@ REST API fundamentals - HTTP methods, status codes, URL structure, request/respo
 বিস্তারিত ব্যাখ্যা সহ সম্পূর্ণ গাইড।
 
 ## 📚 Kotlin Compose
-### [Compose Sideffect]
+### Compose Sideffect
 বিস্তারিত ব্যাখ্যা সহ সম্পূর্ণ গাইড।
+### [DerivedSateOf](https://github.com/hasib824/Android-Development-Essentials/blob/main/derived_state_of.md)
 ### [Snapshotflow](https://github.com/hasib824/Android-Development-Essentials/blob/main/Sideffcet_snapshotflow.md)
+
+
 
 
 
