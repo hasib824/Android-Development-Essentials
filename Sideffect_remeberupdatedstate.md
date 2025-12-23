@@ -19,6 +19,7 @@
 প্রফেশনাল লেভেলে অ্যান্ড্রয়েড ডেভেলপমেন্টে rememberUpdatedState মূলত সেখানে ব্যবহার করা হয় যেখানে কোনো Side Effect
 (যেমন: LaunchedEffect, DisposableEffect) এর ভেতর কোনো ভ্যালু ব্যবহার করা হচ্ছে, কিন্তু ভ্যালু চেঞ্জ হওয়ার কারণে আমরা
 সেই ইফেক্টটিকে বারবার রিস্টার্ট (Restart) করতে চাই না।
+
 rememberUpdatedState = Side Effect এর ভেতর Latest Value নিশ্চিত করা
                       কিন্তু Effect Restart করা ছাড়াই!
 ```
