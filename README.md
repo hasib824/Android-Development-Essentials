@@ -70,7 +70,9 @@ REST API fundamentals - HTTP methods, status codes, URL structure, request/respo
 ### Compose Sideffect
 বিস্তারিত ব্যাখ্যা সহ সম্পূর্ণ গাইড।
 ### [DerivedSateOf](https://github.com/hasib824/Android-Development-Essentials/blob/main/derived_state_of.md)
-### [Snapshotflow](https://github.com/hasib824/Android-Development-Essentials/blob/main/Sideffcet_snapshotflow.md)
+### [Snapshotflow](https://github.com/hasib824/Android-Development-Essentials/blob/main/Sideffcet_snapshotflow.md)  
+### [RememeberUpdatedState](https://github.com/hasib824/Android-Development-Essentials/blob/main/Sideffect_remeberupdatedstate.md) 
+
 
 
 
