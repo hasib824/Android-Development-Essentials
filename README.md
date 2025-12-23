@@ -69,7 +69,7 @@ REST API fundamentals - HTTP methods, status codes, URL structure, request/respo
 ## 📚 Kotlin Compose
 ### [Compose Sideffect]
 বিস্তারিত ব্যাখ্যা সহ সম্পূর্ণ গাইড।
-#### [Snapshotflow](https://github.com/hasib824/Android-Development-Essentials/blob/main/Sideffcet_snapshotflow.md)
+### [Snapshotflow](https://github.com/hasib824/Android-Development-Essentials/blob/main/Sideffcet_snapshotflow.md)
 
 
 
