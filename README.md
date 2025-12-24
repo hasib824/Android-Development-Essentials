@@ -72,7 +72,7 @@ REST API fundamentals - HTTP methods, status codes, URL structure, request/respo
 ### [DerivedSateOf](https://github.com/hasib824/Android-Development-Essentials/blob/main/derived_state_of.md)
 ### [Snapshotflow](https://github.com/hasib824/Android-Development-Essentials/blob/main/Sideffcet_snapshotflow.md)  
 ### [RememeberUpdatedState](https://github.com/hasib824/Android-Development-Essentials/blob/main/Sideffect_remeberupdatedstate.md) 
-### [ProduceState(not used in 99% Case professionalyy)](https://github.com/hasib824/Android-Development-Essentials/blob/main/sideffect_producestate.md) 
+### [ProduceState(not used in 99% Case professionally)](https://github.com/hasib824/Android-Development-Essentials/blob/main/sideffect_producestate.md) 
 
 
 
