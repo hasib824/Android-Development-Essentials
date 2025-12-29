@@ -74,6 +74,9 @@ REST API fundamentals - HTTP methods, status codes, URL structure, request/respo
 ### [RememeberUpdatedState](https://github.com/hasib824/Android-Development-Essentials/blob/main/Sideffect_remeberupdatedstate.md) 
 ### [ProduceState(not used in 99% Case professionally)](https://github.com/hasib824/Android-Development-Essentials/blob/main/sideffect_producestate.md) 
 
+## 📚 Dagger Hilt
+### [Retrofit + Room with Hilt Dependency Injection cheat sheet](https://github.com/hasib824/Android-Development-Essentials/blob/main/hilt_with_retrofit_room.md)
+
 
 
 
