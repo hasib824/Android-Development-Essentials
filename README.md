@@ -75,7 +75,7 @@ REST API fundamentals - HTTP methods, status codes, URL structure, request/respo
 ### [ProduceState(not used in 99% Case professionally)](https://github.com/hasib824/Android-Development-Essentials/blob/main/sideffect_producestate.md) 
 
 ## 📚 Dagger Hilt
-### [Hilt Dependency Injection Scope Table](https://github.com/hasib824/Android-Development-Essentials/blob/main/hilt_scope_comparison_table.md)
+### [Hilt Scope Table](https://github.com/hasib824/Android-Development-Essentials/blob/main/hilt_scope_comparison_table.md)
 ### [Hilt Dependency Injection cheat sheet with Retrofit + Room](https://github.com/hasib824/Android-Development-Essentials/blob/main/hilt_with_retrofit_room.md)
 
 
