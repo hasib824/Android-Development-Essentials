@@ -92,6 +92,7 @@ REST API fundamentals - HTTP methods, status codes, URL structure, request/respo
 
 ## 📚 Viewbinding and databinding
 ### [Viewbinding](https://github.com/hasib824/Android-Development-Essentials/blob/main/viewbinding.md)
+### [databinding](https://github.com/hasib824/Android-Development-Essentials/blob/main/databinding.md)
 
 
 
