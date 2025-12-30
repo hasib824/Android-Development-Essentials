@@ -90,6 +90,11 @@ REST API fundamentals - HTTP methods, status codes, URL structure, request/respo
 ### [Broadcast Receiver elaborated](https://github.com/hasib824/Android-Development-Essentials/blob/main/broadcast_receiver.md)
 
 
+## 📚 Viewbinding and databinding
+### [Viewbinding](https://github.com/hasib824/Android-Development-Essentials/blob/main/viewbinding.md)
+
+
+
 
 
 
