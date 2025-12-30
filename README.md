@@ -86,6 +86,10 @@ REST API fundamentals - HTTP methods, status codes, URL structure, request/respo
 ### [Fragment elaborated](https://github.com/hasib824/Android-Development-Essentials/blob/main/Fragmnt.md)
 ### [Fragment Lifecycle](https://github.com/hasib824/Android-Development-Essentials/blob/main/fragment_lifecycle.md)
 
+## 📚 Broadcast Receiver
+### [Broadcast Receiver elaborated](https://github.com/hasib824/Android-Development-Essentials/blob/main/broadcast_receiver.md)
+
+
 
 
 
