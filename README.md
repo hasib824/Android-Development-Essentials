@@ -82,6 +82,11 @@ REST API fundamentals - HTTP methods, status codes, URL structure, request/respo
 ### [Activity Lifecycle](https://github.com/hasib824/Android-Development-Essentials/blob/main/ACtivity_lifecycle.md)
 
 
+## 📚 Fragment
+### [Fragment elaborated](https://github.com/hasib824/Android-Development-Essentials/blob/main/Fragmnt.md)
+
+
+
 
 
 
