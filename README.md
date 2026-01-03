@@ -1,6 +1,9 @@
 # Android-Development-Essentials
 
 ## 🔓 Kotlin Core Concepts
+
+### [Lambda Function - বাংলায় বিস্তারিত](https://github.com/hasib824/Android-Development-Essentials/blob/main/lambda_function.md)
+
 ### [Open Keyword Tutorial - বাংলায়](https://github.com/hasib824/Android-Development-Essentials/blob/main/KOTLIN_OPEN_KEYWORD.md)
 Kotlin এ inheritance এবং override এর জন্য `open` keyword এর সম্পূর্ণ গাইড। Class, function, property কে extendable করা, `open` vs `abstract` পার্থক্য, এবং Android development এ real-world use cases (BaseViewModel, BaseRepository, Custom Views, Adapter Pattern)।
 
