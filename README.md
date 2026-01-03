@@ -66,6 +66,8 @@ REST API fundamentals - HTTP methods, status codes, URL structure, request/respo
 
 
 ## 📚 Kotlin Coroutine
+
+### [Coroutinescope](https://github.com/hasib824/Android-Development-Essentials/blob/main/coroutinescope.md)
 ### [Coroutinescope vs Supervisorscope](https://outcomeschool.com/blog/coroutinescope-vs-supervisorscope)
 বিস্তারিত ব্যাখ্যা সহ সম্পূর্ণ গাইড।
 
