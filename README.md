@@ -16,6 +16,8 @@ Kotlin এ inheritance এবং override এর জন্য `open` keyword এ
 ### [Kotlin lateinit & Lazy - সংক্ষিপ্ত Tutorial](https://github.com/hasib824/Android-Development-Essentials/blob/main/KOTLIN_LATEINIT_VS_LAZY.md)
 `lateinit` vs `Lazy`- কখন কোনটা use করবেন। 
 
+### [Refied keyword in kotlin](https://github.com/hasib824/Android-Development-Essentials/blob/main/refied_keyword.md)
+
 ### [Sealed Class কী এবং কেন](https://github.com/hasib824/Android-Development-Essentials/blob/main/Kotlin_sealed_class_tutorial_bangla.md)
 Sealed Class কী এবং কেন ব্যবহার করবেন - খুব সহজ ভাষায় ব্যাখ্যা
 * ✅ সব সুবিধা বিস্তারিত - When expression, Type Safety, State Management
