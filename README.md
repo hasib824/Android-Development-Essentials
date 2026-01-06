@@ -104,6 +104,9 @@ REST API fundamentals - HTTP methods, status codes, URL structure, request/respo
 ### [binding adapter](https://github.com/hasib824/Android-Development-Essentials/blob/main/binding_adapter.md)
 ### [2 way databinding flow and mvi](https://github.com/hasib824/Android-Development-Essentials/blob/main/databinding_with_flow_mvi.md)
 
+## 📚 Datastore (Apppreference)
+### [Multiple datstsore with hilt](https://github.com/hasib824/Android-Development-Essentials/blob/main/datastore_with_hilt.md)
+
 
 
 
