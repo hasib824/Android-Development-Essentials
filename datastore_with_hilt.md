@@ -1,47 +1,45 @@
 # DataStore with Hilt Injection - Complete Tutorial
 
-A comprehensive guide to implementing DataStore with Hilt dependency injection in Android, covering both Factory and Extension Property approaches with Wrapper Classes.
+একটি beginner-friendly guide যেখানে আপনি শিখবেন কিভাবে DataStore এর সাথে Hilt Dependency Injection use করতে হয়।
 
 ## 📋 Table of Contents
 
-- [Overview](#overview)
+- [কি শিখবেন এই Tutorial এ](#কি-শিখবেন-এই-tutorial-এ)
 - [Prerequisites](#prerequisites)
 - [Project Setup](#project-setup)
-- [Method 1: Using PreferenceDataStoreFactory](#method-1-using-preferencedatastorefactory)
-- [Method 2: Using Extension Property](#method-2-using-extension-property-without-factory)
+- [Method 1: Extension Property (Simple ⭐ Recommended)](#method-1-extension-property-simple--recommended)
+- [Method 2: PreferenceDataStoreFactory (Alternative)](#method-2-preferencedatastorefactory-alternative)
+- [Multiple DataStore Setup](#multiple-datastore-setup)
 - [Usage Examples](#usage-examples)
-- [Testing](#testing)
-- [Comparison](#comparison)
-- [Best Practices](#best-practices)
+- [Which Method to Choose](#which-method-to-choose)
 
 ---
 
-## Overview
+## কি শিখবেন এই Tutorial এ
 
-This tutorial demonstrates two approaches for injecting DataStore with Hilt:
+এই tutorial এ দুটি approach শেখানো হবে:
 
-1. **PreferenceDataStoreFactory** - Full control with custom configurations
-2. **Extension Property (Delegation)** - Simpler approach with less boilerplate
+1. **Extension Property** - সহজ এবং কম code (বেশিরভাগ প্রজেক্টের জন্য perfect)
+2. **PreferenceDataStoreFactory** - Alternative approach (উভয়ই একই কাজ করে)
 
-Both methods use Wrapper Classes for better encapsulation and maintainability.
+আমরা **Multiple DataStore** setup করবো:
+- **UserSettings DataStore** - Theme, Language, Font Size
+- **Auth DataStore** - Token, User Info
+- **App Config DataStore** - Onboarding, App Version
 
 ---
 
 ## Prerequisites
 
-- Android Studio Arctic Fox or later
-- Minimum SDK 24
-- Kotlin 1.9+
-- Basic knowledge of:
-  - Kotlin Coroutines
-  - Hilt Dependency Injection
-  - DataStore Preferences
+- Android Studio (latest version)
+- Kotlin basics জানা থাকতে হবে
+- Coroutines সম্পর্কে basic ধারণা
 
 ---
 
 ## Project Setup
 
-### 1. Add Dependencies
+### Step 1: Dependencies Add করুন
 
 **build.gradle.kts (Project level):**
 ```kotlin
@@ -84,68 +82,98 @@ android {
 }
 
 dependencies {
-    // AndroidX Core
+    // AndroidX
     implementation("androidx.core:core-ktx:1.12.0")
     implementation("androidx.appcompat:appcompat:1.6.1")
     
-    // DataStore
+    // DataStore Preferences - Key-Value data store করার জন্য (এটাই লাগবে)
     implementation("androidx.datastore:datastore-preferences:1.1.1")
-    implementation("androidx.datastore:datastore-core:1.1.1")
     
-    // Hilt
+    // Hilt - Dependency Injection এর জন্য
     implementation("com.google.dagger:hilt-android:2.51.1")
     kapt("com.google.dagger:hilt-compiler:2.51.1")
     
-    // Coroutines
+    // Coroutines - Asynchronous programming এর জন্য
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.0")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.0")
     
-    // Lifecycle
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")
+    // Lifecycle - ViewModel এবং lifecycle-aware components এর জন্য
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.7.0")
-    
-    // Testing
-    testImplementation("junit:junit:4.13.2")
-    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.8.0")
-    androidTestImplementation("androidx.test.ext:junit:1.1.5")
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")
 }
 ```
 
-### 2. Project Structure
+### DataStore Libraries ব্যাখ্যা:
+
+#### `datastore-preferences` (এটা use করবো ✅)
+```kotlin
+implementation("androidx.datastore:datastore-preferences:1.1.1")
+```
+**কি কাজ করে:**
+- Key-Value pairs store করার জন্য (যেমন SharedPreferences এর মতো)
+- Simple data types: String, Int, Boolean, Float, Long
+- সবচেয়ে common use case
+- আমরা এই tutorial এ এটাই use করবো
+
+**কখন use করবেন:**
+- ✅ App settings (theme, language)
+- ✅ User preferences
+- ✅ Simple configurations
+- ✅ Auth tokens
+
+#### `datastore-core` (Advanced use case এর জন্য ⚠️)
+```kotlin
+implementation("androidx.datastore:datastore-core:1.1.1")
+```
+**কি কাজ করে:**
+- Custom data types store করার জন্য
+- Protocol Buffers (Proto DataStore) use করতে হয়
+- Complex data structures এর জন্য
+- Type-safe কিন্তু setup জটিল
+
+**কখন use করবেন:**
+- ⚠️ Complex objects store করতে হলে
+- ⚠️ Type-safety absolutely প্রয়োজন হলে
+- ⚠️ Proto DataStore implement করতে হলে
+- ⚠️ Custom serialization লাগলে
+
+**এই tutorial এ `datastore-core` লাগবে না কারণ:**
+- আমরা simple key-value pairs store করবো
+- `datastore-preferences` যথেষ্ট
+- Setup সহজ রাখতে চাই
+
+### Step 2: Project Structure
 ```
 app/
-├── src/
-│   └── main/
-│       ├── kotlin/
-│       │   └── com/example/datastoreapp/
-│       │       ├── di/
-│       │       │   ├── DataStoreModule.kt
-│       │       │   └── DataStoreQualifiers.kt
-│       │       │
-│       │       ├── data/
-│       │       │   ├── local/
-│       │       │   │   └── datastore/
-│       │       │   │       ├── UserSettingsDataStore.kt
-│       │       │   │       ├── AuthDataStore.kt
-│       │       │   │       └── AppConfigDataStore.kt
-│       │       │   │
-│       │       │   └── model/
-│       │       │       ├── UserSettings.kt
-│       │       │       ├── AuthData.kt
-│       │       │       └── AppConfig.kt
-│       │       │
-│       │       └── MyApplication.kt
-│       │
-│       └── AndroidManifest.xml
+├── di/
+│   ├── DataStoreModule.kt
+│   ├── DataStoreExtensions.kt
+│   └── Qualifiers.kt
+│
+├── data/
+│   ├── local/
+│   │   ├── UserSettingsDataStore.kt
+│   │   ├── AuthDataStore.kt
+│   │   └── AppConfigDataStore.kt
+│   │
+│   └── model/
+│       ├── UserSettings.kt
+│       ├── AuthData.kt
+│       └── AppConfig.kt
+│
+└── MyApplication.kt
 ```
 
 ---
 
-## Method 1: Using PreferenceDataStoreFactory
+## Method 1: Extension Property (Simple ⭐ Recommended)
 
-### Step 1: Create Qualifiers
+এই method টা **সবচেয়ে সহজ** এবং বেশিরভাগ প্রজেক্টের জন্য যথেষ্ট।
+
+### সব Files একসাথে:
+
+#### File 1: Qualifiers.kt
 ```kotlin
-// di/DataStoreQualifiers.kt
+// di/Qualifiers.kt
 package com.example.datastoreapp.di
 
 import javax.inject.Qualifier
@@ -163,579 +191,12 @@ annotation class AuthDataStore
 annotation class AppConfigDataStore
 ```
 
-### Step 2: Create Hilt Module with Factory
-```kotlin
-// di/DataStoreModule.kt
-package com.example.datastoreapp.di
-
-import android.content.Context
-import androidx.datastore.core.DataStore
-import androidx.datastore.core.handlers.ReplaceFileCorruptionHandler
-import androidx.datastore.preferences.core.PreferenceDataStoreFactory
-import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.core.emptyPreferences
-import androidx.datastore.preferences.preferencesDataStoreFile
-import dagger.Module
-import dagger.Provides
-import dagger.hilt.InstallIn
-import dagger.hilt.android.qualifiers.ApplicationContext
-import dagger.hilt.components.SingletonComponent
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
-import javax.inject.Singleton
-
-@Module
-@InstallIn(SingletonComponent::class)
-object DataStoreModule {
-    
-    private const val USER_SETTINGS_NAME = "user_settings"
-    private const val AUTH_DATA_NAME = "auth_data"
-    private const val APP_CONFIG_NAME = "app_config"
-    
-    @Provides
-    @Singleton
-    @UserSettingsDataStore
-    fun provideUserSettingsDataStore(
-        @ApplicationContext context: Context
-    ): DataStore<Preferences> {
-        return PreferenceDataStoreFactory.create(
-            corruptionHandler = ReplaceFileCorruptionHandler(
-                produceNewData = { emptyPreferences() }
-            ),
-            scope = CoroutineScope(Dispatchers.IO + SupervisorJob()),
-            produceFile = {
-                context.preferencesDataStoreFile(USER_SETTINGS_NAME)
-            }
-        )
-    }
-    
-    @Provides
-    @Singleton
-    @AuthDataStore
-    fun provideAuthDataStore(
-        @ApplicationContext context: Context
-    ): DataStore<Preferences> {
-        return PreferenceDataStoreFactory.create(
-            corruptionHandler = ReplaceFileCorruptionHandler(
-                produceNewData = { emptyPreferences() }
-            ),
-            scope = CoroutineScope(Dispatchers.IO + SupervisorJob()),
-            produceFile = {
-                context.preferencesDataStoreFile(AUTH_DATA_NAME)
-            }
-        )
-    }
-    
-    @Provides
-    @Singleton
-    @AppConfigDataStore
-    fun provideAppConfigDataStore(
-        @ApplicationContext context: Context
-    ): DataStore<Preferences> {
-        return PreferenceDataStoreFactory.create(
-            corruptionHandler = ReplaceFileCorruptionHandler(
-                produceNewData = { emptyPreferences() }
-            ),
-            scope = CoroutineScope(Dispatchers.IO + SupervisorJob()),
-            produceFile = {
-                context.preferencesDataStoreFile(APP_CONFIG_NAME)
-            }
-        )
-    }
-}
-```
-
-### Step 3: Create Data Models
-```kotlin
-// data/model/UserSettings.kt
-package com.example.datastoreapp.data.model
-
-data class UserSettings(
-    val isDarkTheme: Boolean = false,
-    val language: String = "en",
-    val fontSize: Int = 14,
-    val notificationsEnabled: Boolean = true
-)
-```
-```kotlin
-// data/model/AuthData.kt
-package com.example.datastoreapp.data.model
-
-data class AuthData(
-    val accessToken: String = "",
-    val refreshToken: String = "",
-    val userId: String = "",
-    val isLoggedIn: Boolean = false,
-    val tokenExpiryTime: Long = 0L
-)
-```
-```kotlin
-// data/model/AppConfig.kt
-package com.example.datastoreapp.data.model
-
-data class AppConfig(
-    val isOnboardingCompleted: Boolean = false,
-    val appVersion: String = "",
-    val lastSyncTime: Long = 0L,
-    val isFirstLaunch: Boolean = true
-)
-```
-
-### Step 4: Create Wrapper Classes
-
-#### UserSettings DataStore Wrapper
-```kotlin
-// data/local/datastore/UserSettingsDataStore.kt
-package com.example.datastoreapp.data.local.datastore
-
-import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.core.booleanPreferencesKey
-import androidx.datastore.preferences.core.edit
-import androidx.datastore.preferences.core.emptyPreferences
-import androidx.datastore.preferences.core.intPreferencesKey
-import androidx.datastore.preferences.core.stringPreferencesKey
-import com.example.datastoreapp.data.model.UserSettings
-import com.example.datastoreapp.di.UserSettingsDataStore
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.map
-import java.io.IOException
-import javax.inject.Inject
-import javax.inject.Singleton
-
-@Singleton
-class UserSettingsDataStoreWrapper @Inject constructor(
-    @UserSettingsDataStore private val dataStore: DataStore<Preferences>
-) {
-    
-    private object PreferenceKeys {
-        val THEME = booleanPreferencesKey("is_dark_theme")
-        val LANGUAGE = stringPreferencesKey("language")
-        val FONT_SIZE = intPreferencesKey("font_size")
-        val NOTIFICATIONS = booleanPreferencesKey("notifications_enabled")
-    }
-    
-    /**
-     * Get all user settings as a single Flow
-     */
-    val userSettings: Flow<UserSettings> = dataStore.data
-        .catch { exception ->
-            if (exception is IOException) {
-                emit(emptyPreferences())
-            } else {
-                throw exception
-            }
-        }
-        .map { preferences ->
-            UserSettings(
-                isDarkTheme = preferences[PreferenceKeys.THEME] ?: false,
-                language = preferences[PreferenceKeys.LANGUAGE] ?: "en",
-                fontSize = preferences[PreferenceKeys.FONT_SIZE] ?: 14,
-                notificationsEnabled = preferences[PreferenceKeys.NOTIFICATIONS] ?: true
-            )
-        }
-    
-    /**
-     * Get individual properties
-     */
-    val isDarkTheme: Flow<Boolean> = dataStore.data
-        .catch { exception ->
-            if (exception is IOException) {
-                emit(emptyPreferences())
-            } else {
-                throw exception
-            }
-        }
-        .map { preferences ->
-            preferences[PreferenceKeys.THEME] ?: false
-        }
-    
-    val language: Flow<String> = dataStore.data
-        .catch { exception ->
-            if (exception is IOException) {
-                emit(emptyPreferences())
-            } else {
-                throw exception
-            }
-        }
-        .map { preferences ->
-            preferences[PreferenceKeys.LANGUAGE] ?: "en"
-        }
-    
-    val fontSize: Flow<Int> = dataStore.data
-        .catch { exception ->
-            if (exception is IOException) {
-                emit(emptyPreferences())
-            } else {
-                throw exception
-            }
-        }
-        .map { preferences ->
-            preferences[PreferenceKeys.FONT_SIZE] ?: 14
-        }
-    
-    /**
-     * Update theme
-     */
-    suspend fun updateTheme(isDark: Boolean) {
-        dataStore.edit { preferences ->
-            preferences[PreferenceKeys.THEME] = isDark
-        }
-    }
-    
-    /**
-     * Update language
-     */
-    suspend fun updateLanguage(language: String) {
-        dataStore.edit { preferences ->
-            preferences[PreferenceKeys.LANGUAGE] = language
-        }
-    }
-    
-    /**
-     * Update font size
-     */
-    suspend fun updateFontSize(size: Int) {
-        dataStore.edit { preferences ->
-            preferences[PreferenceKeys.FONT_SIZE] = size
-        }
-    }
-    
-    /**
-     * Update notifications
-     */
-    suspend fun updateNotifications(enabled: Boolean) {
-        dataStore.edit { preferences ->
-            preferences[PreferenceKeys.NOTIFICATIONS] = enabled
-        }
-    }
-    
-    /**
-     * Batch update all settings
-     */
-    suspend fun updateAllSettings(settings: UserSettings) {
-        dataStore.edit { preferences ->
-            preferences[PreferenceKeys.THEME] = settings.isDarkTheme
-            preferences[PreferenceKeys.LANGUAGE] = settings.language
-            preferences[PreferenceKeys.FONT_SIZE] = settings.fontSize
-            preferences[PreferenceKeys.NOTIFICATIONS] = settings.notificationsEnabled
-        }
-    }
-    
-    /**
-     * Clear all settings
-     */
-    suspend fun clearAllSettings() {
-        dataStore.edit { preferences ->
-            preferences.clear()
-        }
-    }
-}
-```
-
-#### Auth DataStore Wrapper
-```kotlin
-// data/local/datastore/AuthDataStore.kt
-package com.example.datastoreapp.data.local.datastore
-
-import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.core.booleanPreferencesKey
-import androidx.datastore.preferences.core.edit
-import androidx.datastore.preferences.core.emptyPreferences
-import androidx.datastore.preferences.core.longPreferencesKey
-import androidx.datastore.preferences.core.stringPreferencesKey
-import com.example.datastoreapp.data.model.AuthData
-import com.example.datastoreapp.di.AuthDataStore
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.map
-import java.io.IOException
-import javax.inject.Inject
-import javax.inject.Singleton
-
-@Singleton
-class AuthDataStoreWrapper @Inject constructor(
-    @AuthDataStore private val dataStore: DataStore<Preferences>
-) {
-    
-    private object PreferenceKeys {
-        val ACCESS_TOKEN = stringPreferencesKey("access_token")
-        val REFRESH_TOKEN = stringPreferencesKey("refresh_token")
-        val USER_ID = stringPreferencesKey("user_id")
-        val IS_LOGGED_IN = booleanPreferencesKey("is_logged_in")
-        val TOKEN_EXPIRY_TIME = longPreferencesKey("token_expiry_time")
-    }
-    
-    /**
-     * Get all auth data
-     */
-    val authData: Flow<AuthData> = dataStore.data
-        .catch { exception ->
-            if (exception is IOException) {
-                emit(emptyPreferences())
-            } else {
-                throw exception
-            }
-        }
-        .map { preferences ->
-            AuthData(
-                accessToken = preferences[PreferenceKeys.ACCESS_TOKEN] ?: "",
-                refreshToken = preferences[PreferenceKeys.REFRESH_TOKEN] ?: "",
-                userId = preferences[PreferenceKeys.USER_ID] ?: "",
-                isLoggedIn = preferences[PreferenceKeys.IS_LOGGED_IN] ?: false,
-                tokenExpiryTime = preferences[PreferenceKeys.TOKEN_EXPIRY_TIME] ?: 0L
-            )
-        }
-    
-    /**
-     * Check if user is logged in
-     */
-    val isLoggedIn: Flow<Boolean> = dataStore.data
-        .catch { exception ->
-            if (exception is IOException) {
-                emit(emptyPreferences())
-            } else {
-                throw exception
-            }
-        }
-        .map { preferences ->
-            preferences[PreferenceKeys.IS_LOGGED_IN] ?: false
-        }
-    
-    /**
-     * Get access token
-     */
-    val accessToken: Flow<String> = dataStore.data
-        .catch { exception ->
-            if (exception is IOException) {
-                emit(emptyPreferences())
-            } else {
-                throw exception
-            }
-        }
-        .map { preferences ->
-            preferences[PreferenceKeys.ACCESS_TOKEN] ?: ""
-        }
-    
-    /**
-     * Save auth tokens
-     */
-    suspend fun saveAuthTokens(
-        accessToken: String,
-        refreshToken: String,
-        userId: String,
-        expiryTime: Long
-    ) {
-        dataStore.edit { preferences ->
-            preferences[PreferenceKeys.ACCESS_TOKEN] = accessToken
-            preferences[PreferenceKeys.REFRESH_TOKEN] = refreshToken
-            preferences[PreferenceKeys.USER_ID] = userId
-            preferences[PreferenceKeys.IS_LOGGED_IN] = true
-            preferences[PreferenceKeys.TOKEN_EXPIRY_TIME] = expiryTime
-        }
-    }
-    
-    /**
-     * Update access token only
-     */
-    suspend fun updateAccessToken(token: String, expiryTime: Long) {
-        dataStore.edit { preferences ->
-            preferences[PreferenceKeys.ACCESS_TOKEN] = token
-            preferences[PreferenceKeys.TOKEN_EXPIRY_TIME] = expiryTime
-        }
-    }
-    
-    /**
-     * Clear auth data (logout)
-     */
-    suspend fun clearAuthData() {
-        dataStore.edit { preferences ->
-            preferences.clear()
-        }
-    }
-    
-    /**
-     * Update login status
-     */
-    suspend fun setLoggedIn(isLoggedIn: Boolean) {
-        dataStore.edit { preferences ->
-            preferences[PreferenceKeys.IS_LOGGED_IN] = isLoggedIn
-        }
-    }
-}
-```
-
-#### AppConfig DataStore Wrapper
-```kotlin
-// data/local/datastore/AppConfigDataStore.kt
-package com.example.datastoreapp.data.local.datastore
-
-import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.core.booleanPreferencesKey
-import androidx.datastore.preferences.core.edit
-import androidx.datastore.preferences.core.emptyPreferences
-import androidx.datastore.preferences.core.longPreferencesKey
-import androidx.datastore.preferences.core.stringPreferencesKey
-import com.example.datastoreapp.data.model.AppConfig
-import com.example.datastoreapp.di.AppConfigDataStore
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.map
-import java.io.IOException
-import javax.inject.Inject
-import javax.inject.Singleton
-
-@Singleton
-class AppConfigDataStoreWrapper @Inject constructor(
-    @AppConfigDataStore private val dataStore: DataStore<Preferences>
-) {
-    
-    private object PreferenceKeys {
-        val ONBOARDING_COMPLETED = booleanPreferencesKey("onboarding_completed")
-        val APP_VERSION = stringPreferencesKey("app_version")
-        val LAST_SYNC_TIME = longPreferencesKey("last_sync_time")
-        val IS_FIRST_LAUNCH = booleanPreferencesKey("is_first_launch")
-    }
-    
-    /**
-     * Get all app config
-     */
-    val appConfig: Flow<AppConfig> = dataStore.data
-        .catch { exception ->
-            if (exception is IOException) {
-                emit(emptyPreferences())
-            } else {
-                throw exception
-            }
-        }
-        .map { preferences ->
-            AppConfig(
-                isOnboardingCompleted = preferences[PreferenceKeys.ONBOARDING_COMPLETED] ?: false,
-                appVersion = preferences[PreferenceKeys.APP_VERSION] ?: "",
-                lastSyncTime = preferences[PreferenceKeys.LAST_SYNC_TIME] ?: 0L,
-                isFirstLaunch = preferences[PreferenceKeys.IS_FIRST_LAUNCH] ?: true
-            )
-        }
-    
-    /**
-     * Check if onboarding is completed
-     */
-    val isOnboardingCompleted: Flow<Boolean> = dataStore.data
-        .catch { exception ->
-            if (exception is IOException) {
-                emit(emptyPreferences())
-            } else {
-                throw exception
-            }
-        }
-        .map { preferences ->
-            preferences[PreferenceKeys.ONBOARDING_COMPLETED] ?: false
-        }
-    
-    /**
-     * Check if first launch
-     */
-    val isFirstLaunch: Flow<Boolean> = dataStore.data
-        .catch { exception ->
-            if (exception is IOException) {
-                emit(emptyPreferences())
-            } else {
-                throw exception
-            }
-        }
-        .map { preferences ->
-            preferences[PreferenceKeys.IS_FIRST_LAUNCH] ?: true
-        }
-    
-    /**
-     * Mark onboarding as completed
-     */
-    suspend fun setOnboardingCompleted() {
-        dataStore.edit { preferences ->
-            preferences[PreferenceKeys.ONBOARDING_COMPLETED] = true
-        }
-    }
-    
-    /**
-     * Update app version
-     */
-    suspend fun updateAppVersion(version: String) {
-        dataStore.edit { preferences ->
-            preferences[PreferenceKeys.APP_VERSION] = version
-        }
-    }
-    
-    /**
-     * Update last sync time
-     */
-    suspend fun updateLastSyncTime(time: Long) {
-        dataStore.edit { preferences ->
-            preferences[PreferenceKeys.LAST_SYNC_TIME] = time
-        }
-    }
-    
-    /**
-     * Mark app as not first launch
-     */
-    suspend fun setNotFirstLaunch() {
-        dataStore.edit { preferences ->
-            preferences[PreferenceKeys.IS_FIRST_LAUNCH] = false
-        }
-    }
-    
-    /**
-     * Clear all config
-     */
-    suspend fun clearConfig() {
-        dataStore.edit { preferences ->
-            preferences.clear()
-        }
-    }
-}
-```
-
-### Step 5: Application Class
-```kotlin
-// MyApplication.kt
-package com.example.datastoreapp
-
-import android.app.Application
-import dagger.hilt.android.HiltAndroidApp
-
-@HiltAndroidApp
-class MyApplication : Application()
-```
-
-**AndroidManifest.xml:**
-```xml
-<?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
-
-    <application
-        android:name=".MyApplication"
-        android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
-        android:label="@string/app_name"
-        android:theme="@style/Theme.AppCompat">
-        
-        <!-- Your activities here -->
-        
-    </application>
-
-</manifest>
-```
+**কেন Qualifiers লাগে?**  
+যখন multiple DataStore থাকে, Hilt কে বলতে হয় কোনটা কোথায় inject করবে।
 
 ---
 
-## Method 2: Using Extension Property (Without Factory)
-
-This method is simpler and requires less boilerplate code.
-
-### Step 1: Create Extension Properties
+#### File 2: DataStoreExtensions.kt
 ```kotlin
 // di/DataStoreExtensions.kt
 package com.example.datastoreapp.di
@@ -745,11 +206,7 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
 
-/**
- * Extension properties with delegation
- * These are automatically thread-safe and singleton
- */
-
+// Extension properties - এগুলো automatically singleton এবং thread-safe
 val Context.userSettingsDataStore: DataStore<Preferences> by preferencesDataStore(
     name = "user_settings"
 )
@@ -763,9 +220,11 @@ val Context.appConfigDataStore: DataStore<Preferences> by preferencesDataStore(
 )
 ```
 
-### Step 2: Create Simplified Module
+---
+
+#### File 3: DataStoreModule.kt
 ```kotlin
-// di/DataStoreModule.kt (Method 2)
+// di/DataStoreModule.kt
 package com.example.datastoreapp.di
 
 import android.content.Context
@@ -811,20 +270,456 @@ object DataStoreModule {
 }
 ```
 
-**Note:** All other code (Qualifiers, Data Models, Wrapper Classes, Application Class) remains exactly the same as Method 1!
+---
+
+#### File 4: UserSettings.kt
+```kotlin
+// data/model/UserSettings.kt
+package com.example.datastoreapp.data.model
+
+data class UserSettings(
+    val isDarkTheme: Boolean = false,
+    val language: String = "en",
+    val fontSize: Int = 14
+)
+```
+
+---
+
+#### File 5: AuthData.kt
+```kotlin
+// data/model/AuthData.kt
+package com.example.datastoreapp.data.model
+
+data class AuthData(
+    val accessToken: String = "",
+    val userId: String = "",
+    val isLoggedIn: Boolean = false
+)
+```
+
+---
+
+#### File 6: AppConfig.kt
+```kotlin
+// data/model/AppConfig.kt
+package com.example.datastoreapp.data.model
+
+data class AppConfig(
+    val isOnboardingCompleted: Boolean = false,
+    val appVersion: String = ""
+)
+```
+
+---
+
+#### File 7: UserSettingsDataStore.kt
+```kotlin
+// data/local/UserSettingsDataStore.kt
+package com.example.datastoreapp.data.local
+
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.booleanPreferencesKey
+import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.emptyPreferences
+import androidx.datastore.preferences.core.intPreferencesKey
+import androidx.datastore.preferences.core.stringPreferencesKey
+import com.example.datastoreapp.data.model.UserSettings
+import com.example.datastoreapp.di.UserSettingsDataStore
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.map
+import java.io.IOException
+import javax.inject.Inject
+import javax.inject.Singleton
+
+@Singleton
+class UserSettingsDataStoreWrapper @Inject constructor(
+    @UserSettingsDataStore private val dataStore: DataStore<Preferences>
+) {
+    
+    private object Keys {
+        val THEME = booleanPreferencesKey("is_dark_theme")
+        val LANGUAGE = stringPreferencesKey("language")
+        val FONT_SIZE = intPreferencesKey("font_size")
+    }
+    
+    // Read all settings
+    val userSettings: Flow<UserSettings> = dataStore.data
+        .catch { exception ->
+            if (exception is IOException) {
+                emit(emptyPreferences())
+            } else {
+                throw exception
+            }
+        }
+        .map { preferences ->
+            UserSettings(
+                isDarkTheme = preferences[Keys.THEME] ?: false,
+                language = preferences[Keys.LANGUAGE] ?: "en",
+                fontSize = preferences[Keys.FONT_SIZE] ?: 14
+            )
+        }
+    
+    // Update theme
+    suspend fun updateTheme(isDark: Boolean) {
+        dataStore.edit { preferences ->
+            preferences[Keys.THEME] = isDark
+        }
+    }
+    
+    // Update language
+    suspend fun updateLanguage(language: String) {
+        dataStore.edit { preferences ->
+            preferences[Keys.LANGUAGE] = language
+        }
+    }
+    
+    // Update font size
+    suspend fun updateFontSize(size: Int) {
+        dataStore.edit { preferences ->
+            preferences[Keys.FONT_SIZE] = size
+        }
+    }
+    
+    // Clear all
+    suspend fun clearAll() {
+        dataStore.edit { it.clear() }
+    }
+}
+```
+
+---
+
+#### File 8: AuthDataStore.kt
+```kotlin
+// data/local/AuthDataStore.kt
+package com.example.datastoreapp.data.local
+
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.booleanPreferencesKey
+import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.emptyPreferences
+import androidx.datastore.preferences.core.stringPreferencesKey
+import com.example.datastoreapp.data.model.AuthData
+import com.example.datastoreapp.di.AuthDataStore
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.map
+import java.io.IOException
+import javax.inject.Inject
+import javax.inject.Singleton
+
+@Singleton
+class AuthDataStoreWrapper @Inject constructor(
+    @AuthDataStore private val dataStore: DataStore<Preferences>
+) {
+    
+    private object Keys {
+        val ACCESS_TOKEN = stringPreferencesKey("access_token")
+        val USER_ID = stringPreferencesKey("user_id")
+        val IS_LOGGED_IN = booleanPreferencesKey("is_logged_in")
+    }
+    
+    // Read auth data
+    val authData: Flow<AuthData> = dataStore.data
+        .catch { exception ->
+            if (exception is IOException) {
+                emit(emptyPreferences())
+            } else {
+                throw exception
+            }
+        }
+        .map { preferences ->
+            AuthData(
+                accessToken = preferences[Keys.ACCESS_TOKEN] ?: "",
+                userId = preferences[Keys.USER_ID] ?: "",
+                isLoggedIn = preferences[Keys.IS_LOGGED_IN] ?: false
+            )
+        }
+    
+    // Save auth tokens
+    suspend fun saveAuthData(token: String, userId: String) {
+        dataStore.edit { preferences ->
+            preferences[Keys.ACCESS_TOKEN] = token
+            preferences[Keys.USER_ID] = userId
+            preferences[Keys.IS_LOGGED_IN] = true
+        }
+    }
+    
+    // Clear auth data (logout)
+    suspend fun clearAuthData() {
+        dataStore.edit { it.clear() }
+    }
+}
+```
+
+---
+
+#### File 9: AppConfigDataStore.kt
+```kotlin
+// data/local/AppConfigDataStore.kt
+package com.example.datastoreapp.data.local
+
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.booleanPreferencesKey
+import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.emptyPreferences
+import androidx.datastore.preferences.core.stringPreferencesKey
+import com.example.datastoreapp.data.model.AppConfig
+import com.example.datastoreapp.di.AppConfigDataStore
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.map
+import java.io.IOException
+import javax.inject.Inject
+import javax.inject.Singleton
+
+@Singleton
+class AppConfigDataStoreWrapper @Inject constructor(
+    @AppConfigDataStore private val dataStore: DataStore<Preferences>
+) {
+    
+    private object Keys {
+        val ONBOARDING_COMPLETED = booleanPreferencesKey("onboarding_completed")
+        val APP_VERSION = stringPreferencesKey("app_version")
+    }
+    
+    // Read app config
+    val appConfig: Flow<AppConfig> = dataStore.data
+        .catch { exception ->
+            if (exception is IOException) {
+                emit(emptyPreferences())
+            } else {
+                throw exception
+            }
+        }
+        .map { preferences ->
+            AppConfig(
+                isOnboardingCompleted = preferences[Keys.ONBOARDING_COMPLETED] ?: false,
+                appVersion = preferences[Keys.APP_VERSION] ?: ""
+            )
+        }
+    
+    // Mark onboarding as completed
+    suspend fun setOnboardingCompleted() {
+        dataStore.edit { preferences ->
+            preferences[Keys.ONBOARDING_COMPLETED] = true
+        }
+    }
+    
+    // Update app version
+    suspend fun updateAppVersion(version: String) {
+        dataStore.edit { preferences ->
+            preferences[Keys.APP_VERSION] = version
+        }
+    }
+}
+```
+
+---
+
+#### File 10: MyApplication.kt
+```kotlin
+// MyApplication.kt
+package com.example.datastoreapp
+
+import android.app.Application
+import dagger.hilt.android.HiltAndroidApp
+
+@HiltAndroidApp
+class MyApplication : Application()
+```
+
+**AndroidManifest.xml এ add করুন:**
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <application
+        android:name=".MyApplication"
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:theme="@style/Theme.AppCompat">
+        
+        <!-- Your activities here -->
+        
+    </application>
+
+</manifest>
+```
+
+### ✅ Done! Method 1 Complete
+
+---
+
+## Method 2: PreferenceDataStoreFactory (Alternative)
+
+এই method টাও একই কাজ করে, শুধু DataStore create করার way আলাদা।
+
+### পার্থক্য কি?
+```kotlin
+// Method 1: Extension Property (Recommended)
+val Context.dataStore by preferencesDataStore(name = "settings")
+
+// Method 2: Factory (Alternative - একই কাজ)
+PreferenceDataStoreFactory.create {
+    context.preferencesDataStoreFile("settings")
+}
+```
+
+### কোন files different?
+
+**Files 1-2, 4-10 একই থাকবে Method 1 এর মতো।**  
+**শুধু File 3 (DataStoreModule.kt) different হবে:**
+
+#### File 3 (Modified): DataStoreModule.kt
+```kotlin
+// di/DataStoreModule.kt (Method 2)
+package com.example.datastoreapp.di
+
+import android.content.Context
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.PreferenceDataStoreFactory
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.preferencesDataStoreFile
+import dagger.Module
+import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
+import dagger.hilt.components.SingletonComponent
+import javax.inject.Singleton
+
+@Module
+@InstallIn(SingletonComponent::class)
+object DataStoreModule {
+    
+    @Provides
+    @Singleton
+    @UserSettingsDataStore
+    fun provideUserSettingsDataStore(
+        @ApplicationContext context: Context
+    ): DataStore<Preferences> {
+        return PreferenceDataStoreFactory.create(
+            produceFile = {
+                context.preferencesDataStoreFile("user_settings")
+            }
+        )
+    }
+    
+    @Provides
+    @Singleton
+    @AuthDataStore
+    fun provideAuthDataStore(
+        @ApplicationContext context: Context
+    ): DataStore<Preferences> {
+        return PreferenceDataStoreFactory.create(
+            produceFile = {
+                context.preferencesDataStoreFile("auth_data")
+            }
+        )
+    }
+    
+    @Provides
+    @Singleton
+    @AppConfigDataStore
+    fun provideAppConfigDataStore(
+        @ApplicationContext context: Context
+    ): DataStore<Preferences> {
+        return PreferenceDataStoreFactory.create(
+            produceFile = {
+                context.preferencesDataStoreFile("app_config")
+            }
+        )
+    }
+}
+```
+
+**Note:** Method 2 এ File 2 (DataStoreExtensions.kt) লাগবে না কারণ আমরা extension properties use করছি না।
+
+### ✅ Done! Method 2 Complete
+
+---
+
+## Multiple DataStore Setup
+
+### কেন Multiple DataStore ব্যবহার করবো?
+
+**❌ Bad Practice - একটা DataStore এ সব:**
+```kotlin
+SingleDataStore {
+    // User preferences
+    theme, language, fontSize,
+    
+    // Auth data (sensitive!)
+    token, userId, password,
+    
+    // App config
+    onboarding, version, lastSync
+}
+```
+
+**Problems:**
+- সব mixed up
+- Security risk (sensitive data আলাদা না)
+- Performance issue (বড় file slow)
+- Maintenance কঠিন
+
+**✅ Good Practice - আলাদা আলাদা:**
+```kotlin
+UserSettingsDataStore {
+    theme, language, fontSize
+}
+
+AuthDataStore {
+    token, userId
+}
+
+AppConfigDataStore {
+    onboarding, version
+}
+```
+
+**Benefits:**
+- ✅ Better organization
+- ✅ Security (sensitive data আলাদা)
+- ✅ Performance (ছোট files fast)
+- ✅ Easy maintenance
+
+### Qualifiers কিভাবে কাজ করে?
+
+**Without Qualifiers (Hilt confused!):**
+```kotlin
+class MyClass @Inject constructor(
+    private val dataStore1: DataStore<Preferences>, // ??? Which one?
+    private val dataStore2: DataStore<Preferences>  // ??? Which one?
+)
+```
+
+**With Qualifiers (Clear!):**
+```kotlin
+class MyClass @Inject constructor(
+    @UserSettingsDataStore private val settingsStore: DataStore<Preferences>, // ✅ Clear
+    @AuthDataStore private val authStore: DataStore<Preferences>              // ✅ Clear
+)
+```
 
 ---
 
 ## Usage Examples
 
-### Example 1: Use in ViewModel
+### Example 1: ViewModel এ Use করা
 ```kotlin
-// presentation/viewmodel/SettingsViewModel.kt
-package com.example.datastoreapp.presentation.viewmodel
+// presentation/SettingsViewModel.kt
+package com.example.datastoreapp.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.datastoreapp.data.local.datastore.UserSettingsDataStoreWrapper
+import com.example.datastoreapp.data.local.UserSettingsDataStoreWrapper
 import com.example.datastoreapp.data.model.UserSettings
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
@@ -838,49 +733,92 @@ class SettingsViewModel @Inject constructor(
     private val userSettingsDataStore: UserSettingsDataStoreWrapper
 ) : ViewModel() {
     
-    // Collect settings as StateFlow
-    val userSettings: StateFlow<UserSettings> = userSettingsDataStore.userSettings
-        .stateIn(
+    // Settings কে StateFlow হিসেবে collect করা
+    val userSettings: StateFlow<UserSettings> = 
+        userSettingsDataStore.userSettings.stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000),
             initialValue = UserSettings()
         )
     
-    // Individual property
-    val isDarkTheme: StateFlow<Boolean> = userSettingsDataStore.isDarkTheme
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5000),
-            initialValue = false
-        )
-    
+    // Theme update করা
     fun updateTheme(isDark: Boolean) {
         viewModelScope.launch {
             userSettingsDataStore.updateTheme(isDark)
         }
     }
     
+    // Language update করা
     fun updateLanguage(language: String) {
         viewModelScope.launch {
             userSettingsDataStore.updateLanguage(language)
         }
     }
     
+    // Font size update করা
     fun updateFontSize(size: Int) {
         viewModelScope.launch {
             userSettingsDataStore.updateFontSize(size)
         }
     }
+}
+```
+
+---
+
+### Example 2: Multiple DataStore একসাথে Use করা
+```kotlin
+// data/repository/UserRepository.kt
+package com.example.datastoreapp.data.repository
+
+import com.example.datastoreapp.data.local.AuthDataStoreWrapper
+import com.example.datastoreapp.data.local.UserSettingsDataStoreWrapper
+import kotlinx.coroutines.flow.first
+import javax.inject.Inject
+import javax.inject.Singleton
+
+@Singleton
+class UserRepository @Inject constructor(
+    private val authDataStore: AuthDataStoreWrapper,
+    private val userSettingsDataStore: UserSettingsDataStoreWrapper
+) {
     
-    fun resetSettings() {
-        viewModelScope.launch {
-            userSettingsDataStore.clearAllSettings()
+    // Login করা
+    suspend fun login(token: String, userId: String): Result<Unit> {
+        return try {
+            authDataStore.saveAuthData(token, userId)
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Result.failure(e)
         }
+    }
+    
+    // Logout করা - দুটো DataStore clear করা
+    suspend fun logout(): Result<Unit> {
+        return try {
+            authDataStore.clearAuthData()
+            userSettingsDataStore.clearAll()
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+    
+    // Check if logged in
+    suspend fun isLoggedIn(): Boolean {
+        return authDataStore.authData.first().isLoggedIn
+    }
+    
+    // Get user's preferred language
+    suspend fun getUserLanguage(): String {
+        return userSettingsDataStore.userSettings.first().language
     }
 }
 ```
 
-### Example 2: Use in Activity
+---
+
+### Example 3: Activity তে Use করা
 ```kotlin
 // presentation/MainActivity.kt
 package com.example.datastoreapp.presentation
@@ -891,134 +829,60 @@ import androidx.activity.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import com.example.datastoreapp.presentation.viewmodel.SettingsViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     
-    private val settingsViewModel: SettingsViewModel by viewModels()
+    private val viewModel: SettingsViewModel by viewModels()
     
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         
-        // Collect settings
+        // Settings collect করা
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                settingsViewModel.userSettings.collect { settings ->
-                    // Update UI based on settings
-                    updateUI(settings.isDarkTheme, settings.language)
+                viewModel.userSettings.collect { settings ->
+                    // UI update করা based on settings
+                    applyTheme(settings.isDarkTheme)
+                    applyLanguage(settings.language)
+                    applyFontSize(settings.fontSize)
                 }
             }
         }
-        
-        // Example: Update theme
-        // settingsViewModel.updateTheme(true)
     }
     
-    private fun updateUI(isDarkTheme: Boolean, language: String) {
-        // Your UI update logic
+    private fun applyTheme(isDark: Boolean) {
+        // Your theme change logic
+    }
+    
+    private fun applyLanguage(language: String) {
+        // Your language change logic
+    }
+    
+    private fun applyFontSize(size: Int) {
+        // Your font size change logic
+    }
+    
+    // Button click করলে theme toggle করা
+    private fun onThemeButtonClick() {
+        val currentTheme = viewModel.userSettings.value.isDarkTheme
+        viewModel.updateTheme(!currentTheme)
     }
 }
 ```
 
-### Example 3: Direct DataStore Wrapper Usage in Repository
-```kotlin
-// data/repository/UserRepository.kt
-package com.example.datastoreapp.data.repository
+---
 
-import com.example.datastoreapp.data.local.datastore.AuthDataStoreWrapper
-import com.example.datastoreapp.data.local.datastore.UserSettingsDataStoreWrapper
-import kotlinx.coroutines.flow.first
-import javax.inject.Inject
-import javax.inject.Singleton
-
-@Singleton
-class UserRepository @Inject constructor(
-    private val userSettingsDataStore: UserSettingsDataStoreWrapper,
-    private val authDataStore: AuthDataStoreWrapper
-) {
-    
-    /**
-     * Login user
-     */
-    suspend fun loginUser(
-        accessToken: String,
-        refreshToken: String,
-        userId: String
-    ): Result<Unit> {
-        return try {
-            val expiryTime = System.currentTimeMillis() + (60 * 60 * 1000) // 1 hour
-            
-            authDataStore.saveAuthTokens(
-                accessToken = accessToken,
-                refreshToken = refreshToken,
-                userId = userId,
-                expiryTime = expiryTime
-            )
-            
-            Result.success(Unit)
-        } catch (e: Exception) {
-            Result.failure(e)
-        }
-    }
-    
-    /**
-     * Logout user
-     */
-    suspend fun logoutUser(): Result<Unit> {
-        return try {
-            authDataStore.clearAuthData()
-            userSettingsDataStore.clearAllSettings()
-            Result.success(Unit)
-        } catch (e: Exception) {
-            Result.failure(e)
-        }
-    }
-    
-    /**
-     * Check if user is logged in
-     */
-    suspend fun isUserLoggedIn(): Boolean {
-        return authDataStore.isLoggedIn.first()
-    }
-    
-    /**
-     * Get user's preferred language
-     */
-    suspend fun getUserLanguage(): String {
-        return userSettingsDataStore.language.first()
-    }
-    
-    /**
-     * Update user preferences
-     */
-    suspend fun updateUserPreferences(
-        isDarkTheme: Boolean,
-        language: String,
-        fontSize: Int
-    ): Result<Unit> {
-        return try {
-            userSettingsDataStore.updateTheme(isDarkTheme)
-            userSettingsDataStore.updateLanguage(language)
-            userSettingsDataStore.updateFontSize(fontSize)
-            Result.success(Unit)
-        } catch (e: Exception) {
-            Result.failure(e)
-        }
-    }
-}
-```
-
-### Example 4: Combine Multiple DataStores
+### Example 4: UseCase এ Multiple DataStore Combine করা
 ```kotlin
 // domain/usecase/GetAppStateUseCase.kt
 package com.example.datastoreapp.domain.usecase
 
-import com.example.datastoreapp.data.local.datastore.AppConfigDataStoreWrapper
-import com.example.datastoreapp.data.local.datastore.AuthDataStoreWrapper
-import com.example.datastoreapp.data.local.datastore.UserSettingsDataStoreWrapper
+import com.example.datastoreapp.data.local.AppConfigDataStoreWrapper
+import com.example.datastoreapp.data.local.AuthDataStoreWrapper
+import com.example.datastoreapp.data.local.UserSettingsDataStoreWrapper
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import javax.inject.Inject
@@ -1036,21 +900,18 @@ class GetAppStateUseCase @Inject constructor(
     private val appConfigDataStore: AppConfigDataStoreWrapper
 ) {
     
-    /**
-     * Combine multiple DataStore flows into one
-     */
+    // তিনটা DataStore থেকে data combine করে একটা Flow return করা
     operator fun invoke(): Flow<AppState> {
         return combine(
-            authDataStore.isLoggedIn,
-            userSettingsDataStore.isDarkTheme,
-            appConfigDataStore.isOnboardingCompleted,
-            userSettingsDataStore.language
-        ) { isLoggedIn, isDarkTheme, isOnboardingCompleted, language ->
+            authDataStore.authData,
+            userSettingsDataStore.userSettings,
+            appConfigDataStore.appConfig
+        ) { auth, settings, config ->
             AppState(
-                isLoggedIn = isLoggedIn,
-                isDarkTheme = isDarkTheme,
-                isOnboardingCompleted = isOnboardingCompleted,
-                language = language
+                isLoggedIn = auth.isLoggedIn,
+                isDarkTheme = settings.isDarkTheme,
+                isOnboardingCompleted = config.isOnboardingCompleted,
+                language = settings.language
             )
         }
     }
@@ -1059,437 +920,270 @@ class GetAppStateUseCase @Inject constructor(
 
 ---
 
-## Testing
+## Which Method to Choose
 
-### Example Unit Test
+### Side by Side Comparison
 ```kotlin
-// test/data/local/datastore/UserSettingsDataStoreTest.kt
-package com.example.datastoreapp.data.local.datastore
+// ============================================
+// Method 1: Extension Property (Recommended)
+// ============================================
 
-import android.content.Context
-import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.PreferenceDataStoreFactory
-import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.preferencesDataStoreFile
-import androidx.test.core.app.ApplicationProvider
-import androidx.test.ext.junit.runners.AndroidJUnit4
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.test.TestScope
-import kotlinx.coroutines.test.UnconfinedTestDispatcher
-import kotlinx.coroutines.test.runTest
-import org.junit.After
-import org.junit.Assert.*
-import org.junit.Before
-import org.junit.Test
-import org.junit.runner.RunWith
-
-@OptIn(ExperimentalCoroutinesApi::class)
-@RunWith(AndroidJUnit4::class)
-class UserSettingsDataStoreTest {
-    
-    private val testContext: Context = ApplicationProvider.getApplicationContext()
-    private val testCoroutineDispatcher = UnconfinedTestDispatcher()
-    private val testCoroutineScope = TestScope(testCoroutineDispatcher + Job())
-    
-    private lateinit var dataStore: DataStore<Preferences>
-    private lateinit var userSettingsDataStore: UserSettingsDataStoreWrapper
-    
-    @Before
-    fun setup() {
-        dataStore = PreferenceDataStoreFactory.create(
-            scope = testCoroutineScope,
-            produceFile = { testContext.preferencesDataStoreFile("test_user_settings") }
-        )
-        userSettingsDataStore = UserSettingsDataStoreWrapper(dataStore)
-    }
-    
-    @After
-    fun cleanup() {
-        testContext.preferencesDataStoreFile("test_user_settings").delete()
-    }
-    
-    @Test
-    fun testDefaultUserSettings() = runTest {
-        val settings = userSettingsDataStore.userSettings.first()
-        
-        assertFalse(settings.isDarkTheme)
-        assertEquals("en", settings.language)
-        assertEquals(14, settings.fontSize)
-        assertTrue(settings.notificationsEnabled)
-    }
-    
-    @Test
-    fun testUpdateTheme() = runTest {
-        userSettingsDataStore.updateTheme(true)
-        
-        val isDark = userSettingsDataStore.isDarkTheme.first()
-        assertTrue(isDark)
-    }
-    
-    @Test
-    fun testUpdateLanguage() = runTest {
-        userSettingsDataStore.updateLanguage("bn")
-        
-        val language = userSettingsDataStore.language.first()
-        assertEquals("bn", language)
-    }
-    
-    @Test
-    fun testUpdateFontSize() = runTest {
-        userSettingsDataStore.updateFontSize(18)
-        
-        val fontSize = userSettingsDataStore.fontSize.first()
-        assertEquals(18, fontSize)
-    }
-    
-    @Test
-    fun testUpdateAllSettings() = runTest {
-        val newSettings = UserSettings(
-            isDarkTheme = true,
-            language = "bn",
-            fontSize = 18,
-            notificationsEnabled = false
-        )
-        
-        userSettingsDataStore.updateAllSettings(newSettings)
-        
-        val settings = userSettingsDataStore.userSettings.first()
-        assertEquals(newSettings, settings)
-    }
-    
-    @Test
-    fun testClearAllSettings() = runTest {
-        // First set some values
-        userSettingsDataStore.updateTheme(true)
-        userSettingsDataStore.updateLanguage("bn")
-        
-        // Then clear
-        userSettingsDataStore.clearAllSettings()
-        
-        // Verify defaults are restored
-        val settings = userSettingsDataStore.userSettings.first()
-        assertFalse(settings.isDarkTheme)
-        assertEquals("en", settings.language)
-    }
-}
-```
-
----
-
-## Comparison
-
-### Method 1: PreferenceDataStoreFactory
-
-**Code Example:**
-```kotlin
-@Provides
-@Singleton
-fun provideDataStore(@ApplicationContext context: Context): DataStore<Preferences> {
-    return PreferenceDataStoreFactory.create(
-        corruptionHandler = ReplaceFileCorruptionHandler { emptyPreferences() },
-        scope = CoroutineScope(Dispatchers.IO + SupervisorJob()),
-        produceFile = { context.preferencesDataStoreFile("settings") }
-    )
-}
-```
-
-**Advantages:**
-- ✅ Full control over configuration
-- ✅ Custom corruption handler
-- ✅ Custom coroutine scope
-- ✅ Advanced error handling
-- ✅ Migration support
-- ✅ Multi-process support available
-
-**Disadvantages:**
-- ❌ More boilerplate code
-- ❌ Manual scope management
-- ❌ More complex setup
-
-**Best For:**
-- Production apps with complex requirements
-- Apps needing custom error handling
-- Apps requiring data migrations
-- Multi-process applications
-
----
-
-### Method 2: Extension Property (Delegation)
-
-**Code Example:**
-```kotlin
+// 1. Extension তৈরি করা
 val Context.dataStore by preferencesDataStore(name = "settings")
 
+// 2. Module এ provide করা
 @Provides
-@Singleton
-fun provideDataStore(@ApplicationContext context: Context): DataStore<Preferences> {
-    return context.dataStore
-}
+fun provideDataStore(@ApplicationContext context: Context) = 
+    context.dataStore
+
+// Total Lines: 2-3 lines per DataStore
 ```
-
-**Advantages:**
-- ✅ Minimal boilerplate
-- ✅ Automatic scope management
-- ✅ Thread-safe by default
-- ✅ Clean and simple
-- ✅ Quick setup
-- ✅ Singleton automatically
-
-**Disadvantages:**
-- ❌ Less customization options
-- ❌ Default configurations only
-- ❌ No custom corruption handler
-- ❌ No custom scope
-
-**Best For:**
-- Simple to medium complexity apps
-- Standard use cases
-- Rapid prototyping
-- Learning DataStore
-- Projects prioritizing simplicity
-
----
-
-## Best Practices
-
-### 1. Separation of Concerns
-
-✅ **Do:**
 ```kotlin
-// Separate DataStores for different domains
-UserSettingsDataStore  // UI preferences
-AuthDataStore          // Authentication data
-AppConfigDataStore     // App configuration
-```
+// ============================================
+// Method 2: Factory (Alternative)
+// ============================================
 
-❌ **Don't:**
-```kotlin
-// Mixing all data in one DataStore
-SingleDataStore  // Everything together (Bad!)
-```
-
-### 2. Use Wrapper Classes
-
-✅ **Do:**
-```kotlin
-@Singleton
-class UserSettingsDataStoreWrapper @Inject constructor(
-    @UserSettingsDataStore private val dataStore: DataStore<Preferences>
-) {
-    // All CRUD operations here
-}
-```
-
-**Benefits:**
-- Encapsulation
-- Type safety
-- Easy testing
-- Reusability
-
-### 3. Error Handling
-
-✅ **Do:**
-```kotlin
-val userSettings: Flow<UserSettings> = dataStore.data
-    .catch { exception ->
-        if (exception is IOException) {
-            emit(emptyPreferences())
-        } else {
-            throw exception
-        }
+// 1. Directly Factory use করা Module এ
+@Provides
+fun provideDataStore(@ApplicationContext context: Context) = 
+    PreferenceDataStoreFactory.create {
+        context.preferencesDataStoreFile("settings")
     }
-    .map { /* mapping */ }
+
+// Total Lines: 3-4 lines per DataStore
 ```
 
-### 4. Use Flow for Reactive Updates
+### কোনটা কখন?
 
-✅ **Do:**
-```kotlin
-// Reactive data with Flow
-val isDarkTheme: Flow<Boolean> = dataStore.data
-    .map { it[THEME_KEY] ?: false }
+| Aspect | Method 1 (Extension) | Method 2 (Factory) |
+|--------|---------------------|-------------------|
+| **Code Length** | ✅ Shorter | ⚠️ Slightly Longer |
+| **Readability** | ✅ Very Clean | ⚠️ Good |
+| **Industry Standard** | ✅ Yes | ✅ Yes |
+| **Performance** | ✅ Same | ✅ Same |
+| **Flexibility** | ⚠️ Standard | ✅ More Options |
+| **Recommended** | ✅ YES | ⚠️ Alternative |
 
-// In ViewModel
-val theme = dataStore.isDarkTheme.stateIn(...)
-```
+### 🌟 Final Recommendation
 
-### 5. Qualifiers for Multiple DataStores
+**বেশিরভাগ সময় Method 1 (Extension Property) use করুন কারণ:**
+- ✅ Clean এবং concise code
+- ✅ Kotlin idioms follow করে
+- ✅ Less boilerplate
+- ✅ Industry এ বেশি প্রচলিত
 
-✅ **Do:**
-```kotlin
-@Qualifier
-@Retention(AnnotationRetention.BINARY)
-annotation class UserSettingsDataStore
-
-@Qualifier
-@Retention(AnnotationRetention.BINARY)
-annotation class AuthDataStore
-```
-
-### 6. Avoid Blocking Calls
-
-❌ **Don't:**
-```kotlin
-// Don't use runBlocking in production
-val settings = runBlocking {
-    dataStore.data.first()
-}
-```
-
-✅ **Do:**
-```kotlin
-// Use coroutines properly
-viewModelScope.launch {
-    val settings = dataStore.data.first()
-}
-```
-
-### 7. Data Models
-
-✅ **Do:**
-```kotlin
-// Use data classes for type safety
-data class UserSettings(
-    val isDarkTheme: Boolean = false,
-    val language: String = "en"
-)
-```
-
-### 8. Testing
-
-✅ **Do:**
-```kotlin
-// Use TestScope and test DataStore
-@Before
-fun setup() {
-    dataStore = PreferenceDataStoreFactory.create(
-        scope = testCoroutineScope,
-        produceFile = { testContext.preferencesDataStoreFile("test") }
-    )
-}
-
-@After
-fun cleanup() {
-    testContext.preferencesDataStoreFile("test").delete()
-}
-```
+**Method 2 (Factory) শুধু তখনই যদি:**
+- আপনার specific requirements আছে
+- অথবা আপনি Factory pattern prefer করেন
 
 ---
 
-## Architecture Flow
+## Complete Architecture Flow
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│                      Hilt Module (DI)                       │
-│                 @InstallIn(SingletonComponent)              │
-└──────────────────────────┬──────────────────────────────────┘
-                           │
-                           │ Provides with @Qualifier
-                           ▼
-┌─────────────────────────────────────────────────────────────┐
-│               DataStore<Preferences> Instances              │
-│  @UserSettingsDataStore, @AuthDataStore, @AppConfigDataStore│
-└──────────────────────────┬──────────────────────────────────┘
-                           │
-                           │ Injected into
-                           ▼
-┌─────────────────────────────────────────────────────────────┐
-│                    Wrapper Classes                          │
-│  UserSettingsDataStoreWrapper, AuthDataStoreWrapper, etc.   │
-│              (CRUD Operations + Flow Mapping)               │
-└──────────────────────────┬──────────────────────────────────┘
-                           │
-                           │ Used in
-                           ▼
-┌─────────────────────────────────────────────────────────────┐
-│              Repository / ViewModel / UseCase               │
-│                   (Business Logic Layer)                    │
-└──────────────────────────┬──────────────────────────────────┘
-                           │
-                           │ Consumed by
-                           ▼
-┌─────────────────────────────────────────────────────────────┐
-│                 UI Layer (Activity/Fragment)                │
-│                  Collect Flow as StateFlow                  │
-└─────────────────────────────────────────────────────────────┘
+│                    Hilt Module (DI)                         │
+│              @InstallIn(SingletonComponent)                 │
+└──────┬────────────────────┬────────────────────┬────────────┘
+       │                    │                    │
+       │ @UserSettings      │ @Auth              │ @AppConfig
+       │ DataStore          │ DataStore          │ DataStore
+       ▼                    ▼                    ▼
+┌──────────────┐    ┌──────────────┐    ┌──────────────┐
+│ DataStore    │    │ DataStore    │    │ DataStore    │
+│ (Settings)   │    │ (Auth)       │    │ (Config)     │
+│              │    │              │    │              │
+│ File:        │    │ File:        │    │ File:        │
+│ user_        │    │ auth_        │    │ app_         │
+│ settings     │    │ data         │    │ config       │
+└──────┬───────┘    └──────┬───────┘    └──────┬───────┘
+       │                    │                    │
+       │ Injected into      │                    │
+       ▼                    ▼                    ▼
+┌──────────────┐    ┌──────────────┐    ┌──────────────┐
+│ Wrapper      │    │ Wrapper      │    │ Wrapper      │
+│ Class        │    │ Class        │    │ Class        │
+│              │    │              │    │              │
+│ • Get Data   │    │ • Get Data   │    │ • Get Data   │
+│ • Update     │    │ • Update     │    │ • Update     │
+│ • Clear      │    │ • Clear      │    │ • Clear      │
+└──────┬───────┘    └──────┬───────┘    └──────┬───────┘
+       │                    │                    │
+       └────────────────────┴────────────────────┘
+                            │
+                            │ Used in
+                            ▼
+                 ┌──────────────────────┐
+                 │  ViewModel/Repository│
+                 │                      │
+                 │  • Business Logic    │
+                 │  • Data Validation   │
+                 │  • Combine Data      │
+                 └──────────┬───────────┘
+                            │
+                            │ Collected by
+                            ▼
+                 ┌──────────────────────┐
+                 │    UI Layer          │
+                 │   (Activity/Fragment)│
+                 │                      │
+                 │  • Display Data      │
+                 │  • User Interaction  │
+                 └──────────────────────┘
 ```
 
 ---
 
 ## Key Takeaways
 
-1. **Multiple DataStores** separate concerns and improve maintainability
-2. **Qualifiers** allow Hilt to distinguish between different DataStore instances
-3. **Wrapper Classes** encapsulate DataStore operations and provide clean API
-4. **Flow API** enables reactive data updates
-5. **Method 1 (Factory)** provides more control, **Method 2 (Extension)** is simpler
-6. Both methods can coexist in the same project
-7. Always handle IOException with proper error recovery
-8. Use StateFlow in ViewModels for UI consumption
-9. Write tests for DataStore operations
-10. Follow Clean Architecture principles
+### 1. Dependencies
+```kotlin
+// শুধু এটা লাগবে simple key-value storage এর জন্য
+implementation("androidx.datastore:datastore-preferences:1.1.1")
+
+// এটা লাগবে না (complex types এর জন্য)
+// implementation("androidx.datastore:datastore-core:1.1.1")
+```
+
+### 2. Multiple DataStore
+```kotlin
+// আলাদা আলাদা DataStore = Better organization
+UserSettingsDataStore  // UI preferences
+AuthDataStore          // Login data
+AppConfigDataStore     // App state
+```
+
+### 3. Qualifiers Must
+```kotlin
+// Multiple DataStore থাকলে Qualifier অবশ্যই লাগবে
+@UserSettingsDataStore
+@AuthDataStore
+@AppConfigDataStore
+```
+
+### 4. Method Choice
+```kotlin
+// Method 1: Extension Property (Recommended)
+val Context.dataStore by preferencesDataStore(name = "settings")
+
+// Method 2: Factory (Alternative - same result)
+PreferenceDataStoreFactory.create { ... }
+```
+
+### 5. Architecture Pattern
+```kotlin
+// এই flow follow করুন
+Module → DataStore → Wrapper → Repository/ViewModel → UI
+```
 
 ---
 
-## Common Issues and Solutions
+## Common Mistakes to Avoid
 
-### Issue 1: Multiple DataStore Instances
-
-**Problem:**
+### ❌ Mistake 1: No Qualifiers with Multiple DataStores
 ```kotlin
-// Ambiguous DataStore injection
-class MyClass @Inject constructor(
-    private val dataStore: DataStore<Preferences> // Which one?
-)
+// Wrong - Hilt confused!
+@Provides
+fun provideDataStore1(...): DataStore<Preferences> { }
+
+@Provides
+fun provideDataStore2(...): DataStore<Preferences> { }
+```
+```kotlin
+// Correct - Use Qualifiers
+@Provides
+@UserSettingsDataStore
+fun provideDataStore1(...): DataStore<Preferences> { }
+
+@Provides
+@AuthDataStore
+fun provideDataStore2(...): DataStore<Preferences> { }
 ```
 
-**Solution:**
+### ❌ Mistake 2: Same File Name for Multiple DataStores
 ```kotlin
-// Use qualifiers
-class MyClass @Inject constructor(
+// Wrong - File conflict!
+val Context.dataStore1 by preferencesDataStore(name = "app_data")
+val Context.dataStore2 by preferencesDataStore(name = "app_data")
+```
+```kotlin
+// Correct - Unique names
+val Context.settingsStore by preferencesDataStore(name = "user_settings")
+val Context.authStore by preferencesDataStore(name = "auth_data")
+```
+
+### ❌ Mistake 3: Forgetting Application Class
+```kotlin
+// Wrong - App will crash!
+class MyApplication : Application() {
+    // No @HiltAndroidApp annotation
+}
+```
+```kotlin
+// Correct
+@HiltAndroidApp
+class MyApplication : Application()
+```
+
+### ❌ Mistake 4: Direct DataStore Access without Wrapper
+```kotlin
+// Wrong - Repeated code everywhere
+class MyViewModel @Inject constructor(
     @UserSettingsDataStore private val dataStore: DataStore<Preferences>
-)
+) {
+    // Writing same read/write logic everywhere
+}
 ```
-
-### Issue 2: DataStore File Already Exists
-
-**Problem:**
-```
-java.lang.IllegalStateException: DataStore file already exists
-```
-
-**Solution:**
 ```kotlin
-// Use unique names for each DataStore
-val Context.userSettings by preferencesDataStore("user_settings")
-val Context.authData by preferencesDataStore("auth_data") // Different name
-```
-
-### Issue 3: Cannot Access From Multiple Processes
-
-**Problem:**
-```
-Can't use DataStore from multiple processes
-```
-
-**Solution:**
-```kotlin
-// Use multiProcessDataStore for multi-process apps
-val Context.dataStore by multiProcessPreferencesDataStore("settings")
+// Correct - Use Wrapper
+class MyViewModel @Inject constructor(
+    private val userSettingsDataStore: UserSettingsDataStoreWrapper
+) {
+    // Clean API
+}
 ```
 
 ---
 
-## Contributing
+## Summary
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+### যা শিখলেন:
 
----
+✅ DataStore setup with Hilt  
+✅ Multiple DataStore configuration  
+✅ Qualifier ব্যবহার করে DataStore distinguish করা  
+✅ Wrapper class pattern  
+✅ দুটি different approach (Extension vs Factory)  
+✅ Real-world usage examples  
+✅ Complete architecture flow  
 
-## License
+### Dependencies Summary:
+```kotlin
+// Only this is needed for this tutorial
+implementation("androidx.datastore:datastore-preferences:1.1.1")
 
-This tutorial is available under the MIT License.
+// datastore-core শুধু advanced use cases এর জন্য
+// (Proto DataStore, custom types)
+// This tutorial doesn't need it
+```
+
+### Method Recommendation:
+
+🌟 **Use Method 1 (Extension Property)**
+- Clean code
+- Industry standard
+- Easy to understand
+
+⚙️ **Method 2 (Factory) is optional**
+- Same result
+- Alternative syntax
+- Slightly more verbose
+
+### Next Steps:
+
+1. আপনার project এ implement করুন
+2. Method 1 দিয়ে start করুন
+3. প্রয়োজন মতো multiple DataStore add করুন
+4. Wrapper classes use করে clean API maintain করুন
 
 ---
 
@@ -1498,14 +1192,13 @@ This tutorial is available under the MIT License.
 - [Official DataStore Documentation](https://developer.android.com/topic/libraries/architecture/datastore)
 - [Hilt Documentation](https://dagger.dev/hilt/)
 - [Kotlin Coroutines Guide](https://kotlinlang.org/docs/coroutines-guide.html)
-- [Flow Documentation](https://kotlinlang.org/docs/flow.html)
-
----
-
-## Author
-
-Created as a comprehensive guide for Android developers working with DataStore and Hilt.
 
 ---
 
 **Happy Coding! 🚀**
+
+---
+
+**Created by:** Android Developers Community  
+**Last Updated:** 2025  
+**License:** MIT
