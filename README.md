@@ -108,7 +108,7 @@ REST API fundamentals - HTTP methods, status codes, URL structure, request/respo
 ### [Multiple datstsore with hilt](https://github.com/hasib824/Android-Development-Essentials/blob/main/datastore_with_hilt.md)
 
 ## [Workmanager](https://github.com/hasib824/Android-Development-Essentials/blob/main/workmanager.md)
-## [Workmanager](https://github.com/hasib824/Android-Development-Essentials/blob/main/alarmanager.md)
+## [AlarmManager](https://github.com/hasib824/Android-Development-Essentials/blob/main/alarmanager.md)
 
 
 
